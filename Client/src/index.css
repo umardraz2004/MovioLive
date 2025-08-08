@@ -1,1 +1,82 @@
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Load fonts */
+@font-face {
+    font-family: "Lobster";
+    src:
+        url("./assets/fonts/Lobster-Regular.ttf") format("truetype");
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Kanit";
+    src:
+        url("./assets/fonts/Kanit-Regular.ttf") format("truetype");
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "WorkSans";
+    src:
+        url("./assets/fonts/WorkSans-Regular.ttf") format("truetype");
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "BebasNeue";
+    src:
+        url("./assets/fonts/BebasNeue-Regular.ttf") format("truetype");
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Tailwind v4 theme tokens */
+@theme {
+    --font-Lobster: "Lobster", cursive;
+    --font-Kanit: "Kanit", sans-serif;
+    --font-WorkSans: "WorkSans", sans-serif;
+    --font-BebasNeue: "BebasNeue", sans-serif;
+}
+
 @import "tailwindcss";
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #0f172a;
+    /* Tailwind's slate-900 or use any dark color */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #1d2c4f;
+    /* Tailwind green-400 */
+    border-radius: 9999px;
+    border: 2px solid #0f172a;
+    /* Match the track background for padding illusion */
+    background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #22c55e;
+    /* Tailwind green-500 */
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #1d2c4f #0f172a;
+    /* thumb color, track color */
+}
+
+::selection {
+    background-color: #0a0f1c;
+    /* amber-400 */
+    color: white;
+    /* slate-800 */
+}
