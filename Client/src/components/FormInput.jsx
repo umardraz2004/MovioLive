@@ -32,7 +32,7 @@ const FormInput = ({ id, label, type, placeholder, register, errors }) => {
                 ? "border-red-500"
                 : "border-gray-300 dark:border-gray-600"
             } 
-            bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white 
+            bg-gray-50 dark:bg-black text-gray-900 dark:text-white 
             focus:outline-none focus:ring-2 focus:ring-red-500`}
         />
 

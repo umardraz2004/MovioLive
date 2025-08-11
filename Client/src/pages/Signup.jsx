@@ -22,13 +22,13 @@ const Signup = () => {
     console.log("Done!");
   };
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-4.5rem)] bg-gray-100 dark:bg-gray-900 px-4">
+    <div className="flex items-center justify-center min-h-[calc(100vh-4.5rem)] px-4">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
-        className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 my-9"
+        className="w-full max-w-md bg-white dark:bg-black rounded-lg shadow-lg p-8 my-15"
       >
         {/* Logo + Title */}
         <FormHeader

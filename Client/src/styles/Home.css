@@ -1,0 +1,120 @@
+/* ---------- HERO (cinematic gradient, no image) ---------- */
+.hero-root {
+  position: relative;
+  overflow: hidden;
+  background-image: url("../assets/images/hero.png");
+  background-size: cover;
+  background-position: center;
+}
+
+/* Text content above overlay */
+.hero-root .container {
+  position: relative;
+  z-index: 3;
+}
+
+.hero-root {
+  color: white;
+}
+
+html[data-theme="light"] .hero-root {
+  color: #111827;
+}
+
+/* center container above overlay */
+.hero-root .container {
+  position: relative;
+  z-index: 5;
+}
+
+/* subtle floating film strip (decor) */
+.hero-root::after {
+  content: "";
+  position: absolute;
+  left: -10%;
+  bottom: 6%;
+  width: 120%;
+  height: 110px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.22), rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.22));
+  opacity: 0.06;
+  transform: rotate(-2deg);
+  z-index: 1;
+}
+
+/* ---------- Feature glass card ---------- */
+.feature-glass {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
+  border-radius: 12px;
+  padding: 18px;
+  transition: transform 0.28s ease, box-shadow 0.28s ease;
+}
+
+html[data-theme="dark"] .feature-glass {
+  background: rgba(20, 20, 22, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.6);
+}
+
+.feature-glass:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 28px 80px rgba(2, 6, 23, 0.12);
+}
+
+/* icon box styling (overrides inline gradient) */
+.feature-glass>div.w-14 {
+  border-radius: 10px;
+  width: 56px;
+  height: 56px;
+}
+
+/* ---------- Join CTA ---------- */
+.join-cta {
+  background: linear-gradient(90deg, rgba(239, 68, 68, 0.95), rgba(124, 58, 237, 0.95));
+  color: #fff;
+  border-radius: 12px;
+  margin: 0 1rem 2rem 1rem;
+  padding: 2.5rem 1rem;
+}
+
+/* ---------- FAQ accordion ---------- */
+.faq .faq-q {
+  cursor: pointer;
+}
+
+.faq .faq-a {
+  transition: max-height .35s ease, opacity .25s ease;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+}
+
+.faq .faq-a.open {
+  max-height: 400px;
+  opacity: 1;
+}
+
+/* ---------- Footer small touches ---------- */
+footer {
+  background: linear-gradient(180deg, #050505, #0b0b0b);
+}
+
+footer a {
+  transition: color .18s ease;
+}
+
+footer a:hover {
+  color: #fff;
+}
+
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 768px) {
+  .hero-root {
+    padding-bottom: 3rem;
+  }
+
+  .feature-glass {
+    padding: 16px;
+  }
+}

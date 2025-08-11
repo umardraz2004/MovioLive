@@ -22,13 +22,13 @@ const Contact = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-4.5rem)] bg-gray-100 dark:bg-gray-900 px-4">
+    <div className="flex items-center justify-center px-4">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         viewport={{ once: true, amount: 0.3 }}
-        className="w-full max-w-2xl bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 my-9"
+        className="w-full max-w-2xl bg-white dark:bg-black rounded-lg shadow-lg p-10 my-15"
       >
         {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -78,7 +78,7 @@ const Contact = () => {
                     ? "border-red-500"
                     : "border-gray-300 dark:border-gray-600"
                 } 
-                bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white 
+                bg-gray-50 dark:bg-black text-gray-900 dark:text-white 
                 focus:outline-none focus:ring-2 focus:ring-red-500`}
             ></textarea>
             {errors.message && (

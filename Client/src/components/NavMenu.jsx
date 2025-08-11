@@ -4,7 +4,7 @@ import HoverUnderlineButton from "./HoverUnderLineButton";
 const NavMenu = ({ isLoggedIn, isOrganizer, handleLogout, closeMenu }) => {
   return (
     <>
-      <NavLink to="/" label="Home" OnNavBtnClick={closeMenu} />``
+      <NavLink to="/" label="Home" OnNavBtnClick={closeMenu} />
       <NavLink to="/contact" label="Contact us" OnNavBtnClick={closeMenu} />
       {!isLoggedIn && (
         <>
