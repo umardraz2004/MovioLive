@@ -111,7 +111,7 @@ const Navbar = () => {
               exit={{ x: "100%" }}
               transition={{ duration: 0.35, ease: [0.25, 0.8, 0.25, 1] }}
               className="fixed top-0 right-0 w-72 h-full 
-                   bg-white dark:bg-gray-900 
+                   bg-white/90 dark:bg-black/90
                    shadow-2xl shadow-black/40
                    z-50 p-6 flex flex-col justify-between
                    rounded-l-2xl border-l border-gray-200 dark:border-gray-700"
