@@ -41,6 +41,23 @@
     --font-BebasNeue: "BebasNeue", sans-serif;
 }
 
+@keyframes gradient-move {
+    0% {
+        background-position: 200% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.animate-gradient-move {
+    background-size: 200% 100%;
+    animation: gradient-move 2s linear infinite;
+}
+
+
+
 @import "tailwindcss";
 
 /* Chrome, Edge, Safari */

@@ -151,8 +151,13 @@ const Home = () => {
               transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
               viewport={{ once: true, amount: 0.3 }}
             >
-              <h2 className="text-3xl lg:text-4xl font-bold mb-6 text-red-600">
+              <h2 className="relative text-3xl lg:text-4xl font-bold mb-6 text-red-600">
                 About MovioLive
+                <span
+                  className="absolute left-0 -bottom-3 w-16 h-1 
+             bg-gradient-to-r from-red-500 via-orange-400 to-red-500 
+             rounded-full animate-gradient-move"
+                ></span>
               </h2>
 
               <p className="text-gray-700 dark:text-gray-300 leading-relaxed mb-4 text-lg">
@@ -176,7 +181,7 @@ const Home = () => {
                   "Built-in analytics",
                 ].map((feature, index) => (
                   <li key={index} className="flex items-center space-x-2">
-                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-red-600 flex items-center justify-center text-white text-xs">
                       ✓
                     </span>
                     <span>{feature}</span>
@@ -186,17 +191,25 @@ const Home = () => {
             </motion.div>
           </div>
         </motion.section>
+
         {/* FEATURES */}
-        <section className="container mx-auto px-6 lg:px-12 mb-10 dark:bg-black/70 pb-16 pt-10">
+        <section className="container mx-auto px-6 lg:px-12 mb-10 bg-gray-300 dark:bg-black/70 pb-16 pt-10">
           {/* Title */}
           <motion.h3
-            className="text-3xl lg:text-4xl font-bold text-center mb-12 text-red-600"
+            className="relative text-3xl lg:text-4xl font-bold text-center mb-12 
+             text-red-600"
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
             viewport={{ once: true, amount: 0.3 }}
           >
             Features
+            {/* Decorative underline */}
+            <span
+              className="absolute left-1/2 -bottom-3 w-16 h-1 
+             bg-gradient-to-r from-red-500 via-orange-400 to-red-500 
+             rounded-full transform -translate-x-1/2 animate-gradient-move"
+            ></span>
           </motion.h3>
 
           {/* Feature Grid */}
@@ -213,7 +226,7 @@ const Home = () => {
                 className="p-6 rounded-xl shadow-lg border border-gray-200 dark:dark:bg-[#111111] bg-white/60 dark:bg-gray-800/60 backdrop-blur-md hover:shadow-xl transition-all duration-300"
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, ease: "easeOut", delay: i * 0.1 }}
+                transition={{ duration: 0, ease: "easeOut" }}
                 viewport={{ once: true, amount: 0.3 }}
                 whileHover={{ y: -5 }}
               >
@@ -242,8 +255,13 @@ const Home = () => {
           viewport={{ once: true, amount: 0.3 }}
         >
           {/* Title */}
-          <h3 className="text-3xl lg:text-4xl font-bold text-center mb-10 text-red-600">
+          <h3 className="relative text-3xl lg:text-4xl font-bold text-center mb-10 text-red-600">
             FAQ
+            <span
+              className="absolute left-1/2 -bottom-3 w-16 h-1 
+             bg-gradient-to-r from-red-500 via-orange-400 to-red-500 
+             rounded-full transform -translate-x-1/2 animate-gradient-move"
+            ></span>
           </h3>
 
           {/* FAQ Items */}

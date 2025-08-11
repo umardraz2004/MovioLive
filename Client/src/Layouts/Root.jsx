@@ -41,7 +41,7 @@ const Root = () => {
       {/* FOOTER */}
       <footer className="bg-gray-900 text-gray-300 relative overflow-hidden">
         {/* Gradient top border */}
-        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-red-500 via-purple-500 to-blue-500"></div>
+        <div className="absolute top-0 left-0 w-full h-[5px] bg-gradient-to-r from-blue-500 via-red-500 to-purple-500 animate-gradient-move"></div>
 
         <div className="container mx-auto px-6 lg:px-12 py-14 grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Logo Section */}

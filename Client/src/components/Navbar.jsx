@@ -53,7 +53,7 @@ const Navbar = () => {
         transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]
         ${
           isSticky
-            ? "bg-white/80 dark:bg-black backdrop-blur-md shadow-md opacity-95"
+            ? "bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-md opacity-95"
             : "bg-white dark:bg-black"
         }`}
       >
