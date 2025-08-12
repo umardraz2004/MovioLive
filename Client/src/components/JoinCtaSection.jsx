@@ -4,16 +4,13 @@ import { Link } from "react-router-dom";
 const JoinCtaSection = () => {
   return (
     <motion.section
-      className="join-cta py-20 relative overflow-hidden"
+      className="join-cta py-20 bg-gradient-to-br from-red-700 via-red-800 to-red-900"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.3 }}
     >
-      {/* Glow border effect */}
-      <div className="absolute inset-0 border border-transparent rounded-2xl bg-gradient-to-r from-red-500/40 via-purple-500/40 to-blue-500/40 p-[2px]"></div>
-
-      <div className="relative container mx-auto px-6 lg:px-12 text-center">
+      <div className="container mx-auto px-6 lg:px-12 text-center">
         <motion.h3
           className="text-3xl lg:text-4xl font-bold text-white"
           initial={{ opacity: 0, y: 20 }}

@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
 import { HelpLinks, QuickLinks, SocialIcons } from "../utils/Data";
 import FooterLinks from "./FooterLinks";
+import NavLogo from "../assets/images/NavLogo.png"
 
 const FooterSection = () => {
   return (
@@ -11,10 +11,8 @@ const FooterSection = () => {
       <div className="container mx-auto px-6 lg:px-12 py-14 grid grid-cols-1 md:grid-cols-4 gap-10">
         {/* Logo Section */}
         <div>
-          <div className="inline-flex items-center gap-3">
-            <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-red-600 via-purple-600 to-blue-600 flex items-center justify-center text-white font-bold animate-pulse-slow">
-              ML
-            </div>
+          <div className="inline-flex items-center gap-2">
+            <img src={NavLogo} alt="nav logo" className="w-12" />
             <div>
               <div className="font-bold text-white text-lg">MovioLive</div>
               <div className="text-sm text-gray-400">

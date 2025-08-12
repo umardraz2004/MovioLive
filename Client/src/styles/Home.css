@@ -71,7 +71,6 @@ html[data-theme="dark"] .feature-glass {
 
 /* ---------- Join CTA ---------- */
 .join-cta {
-  background: linear-gradient(90deg, rgba(239, 68, 68, 0.95), rgba(124, 58, 237, 0.95));
   color: #fff;
   border-radius: 12px;
   margin: 0 1rem 2rem 1rem;

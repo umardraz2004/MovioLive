@@ -25,18 +25,6 @@ const NavMenu = ({ isLoggedIn, isOrganizer, handleLogout, closeMenu }) => {
       {isLoggedIn && (
         <HoverUnderlineButton onClick={handleLogout} label="Logout" />
       )}
-      <Link
-        to="/profile"
-        className="flex items-center rounded-full border-2 border-red-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-        aria-label="User Profile"
-        draggable={false}
-      >
-        <img
-          src={user.avatar}
-          alt={user.name}
-          className="w-10 h-10 rounded-full object-cover"
-        />
-      </Link>
     </>
   );
 };

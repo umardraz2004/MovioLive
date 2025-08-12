@@ -1,16 +1,22 @@
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ThemeContext } from "../store/ThemeContext";
 import { FiMenu, FiX } from "react-icons/fi";
 import { LuSun } from "react-icons/lu";
 import { BsFillMoonStarsFill } from "react-icons/bs";
 import { AnimatePresence, motion } from "framer-motion";
 import NavLogo from "../assets/images/NavLogo.png";
 import NavMenu from "./NavMenu";
+import { FaUserCircle } from "react-icons/fa";
+const user = {
+  name: "John Doe",
+  email: "john@example.com",
+  role: "Organizer",
+  avatar: "",
+  joined: "March 2024",
+};
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { theme, toggleTheme } = useContext(ThemeContext);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isOrganizer, setIsOrganizer] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -74,7 +80,25 @@ const Navbar = () => {
             isOrganizer={isOrganizer}
             handleLogout={handleLogout}
           />
-          <ThemeToggleButton onClick={toggleTheme} theme={theme} />
+          <div className="flex items-center">
+            <Link
+              to="/profile"
+              onClick={closeMenu}
+              className="rounded-full border-2 border-red-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              aria-label="User Profile"
+              draggable={false}
+            >
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt={user.name || "User"}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              ) : (
+                <FaUserCircle className="w-10 h-10 text-gray-400 dark:text-gray-600" />
+              )}
+            </Link>
+          </div>
         </div>
 
         {/* Mobile Hamburger */}
@@ -125,19 +149,27 @@ const Navbar = () => {
                   closeMenu={closeMenu}
                 />
               </div>
-
-              {/* Theme Switcher */}
-              <div className="flex items-center justify-between border-t-2 pt-5 dark:border-white border-gray-800">
-                <span className="text-sm font-semibold text-gray-700 dark:text-gray-200 tracking-wide">
-                  Theme
-                </span>
-                <ThemeToggleButton
-                  onClick={() => {
-                    toggleTheme();
-                    closeMenu();
-                  }}
-                  theme={theme}
-                />
+              <div className="flex items-center justify-between border-t-2 pt-5 border-gray-900 dark:border-white">
+                <div className="font-semibold font-WorkSans text-red-600 dark:text-white">
+                  Your Profile
+                </div>
+                <Link
+                  to="/profile"
+                  onClick={closeMenu}
+                  className="rounded-full border-2 border-red-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                  aria-label="User Profile"
+                  draggable={false}
+                >
+                  {user?.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.name || "User"}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <FaUserCircle className="w-10 h-10 text-gray-400 dark:text-gray-600" />
+                  )}
+                </Link>
               </div>
             </motion.div>
           </>

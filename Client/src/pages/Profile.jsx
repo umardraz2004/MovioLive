@@ -1,99 +1,206 @@
-import { useContext } from "react";
+import { useState, useContext } from "react";
+import { Link } from "react-router-dom";
 import { ThemeContext } from "../store/ThemeContext";
-import { motion } from "framer-motion";
+import {
+  FaEdit,
+  FaSave,
+  FaTimes,
+  FaUpload,
+  FaTicketAlt,
+  FaCalendarAlt,
+  FaCog,
+  FaMoon,
+  FaSun,
+  FaUserCircle,
+} from "react-icons/fa";
 
-const Profile = () => {
-  const { theme } = useContext(ThemeContext);
+export default function ProfilePage() {
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
-  const user = {
+  const [profileImage, setProfileImage] = useState("");
+  const [editField, setEditField] = useState(null);
+  const [formData, setFormData] = useState({
     name: "John Doe",
-    email: "john@example.com",
-    role: "Organizer",
-    avatar: "https://i.pravatar.cc/150?img=12",
-    joined: "March 2024",
+    email: "johndoe@email.com",
+    password: "********",
+    role: "Audience",
+  });
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) setProfileImage(URL.createObjectURL(file));
+  };
+
+  const handleChange = (field, value) => {
+    setFormData({ ...formData, [field]: value });
+  };
+
+  const handleSave = (field) => {
+    // TODO: Save field to backend
+    setEditField(null);
   };
 
   return (
-    <div className="flex items-center justify-center py-16 px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 50, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="max-w-3xl w-full bg-white/10 backdrop-blur-lg rounded-3xl border border-white/20 shadow-xl p-10 text-white"
-      >
-        {/* Top: Avatar and Info */}
-        <div className="flex flex-col sm:flex-row items-center gap-8">
-          <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-pink-500 shadow-lg hover:scale-105 transition-transform duration-300">
-            <img
-              src={user.avatar}
-              alt={user.name}
-              className="w-full h-full object-cover"
-              draggable={false}
-            />
-            <div className="absolute inset-0 rounded-full ring-2 ring-pink-400 animate-pulse opacity-60"></div>
-          </div>
+    <div className="text-gray-900 dark:text-gray-100 p-6">
+      <div className="max-w-4xl mx-auto space-y-8">
+        {/* Top Bar with Theme Toggle */}
+        <div className="flex justify-end">
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-2 px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
+          >
+            {theme === "light" ? <FaMoon /> : <FaSun />}
+            {theme === "light" ? "Dark Mode" : "Light Mode"}
+          </button>
+        </div>
 
-          <div className="flex-1 text-center sm:text-left">
-            <h1 className="text-4xl font-extrabold tracking-tight drop-shadow-lg">
-              {user.name}
-            </h1>
-            <p className="mt-1 text-sm tracking-wide text-pink-300/90">
-              {user.email}
-            </p>
+        {/* Profile Image */}
+        <div className="flex flex-col items-center">
+          <div className="relative group">
+            {profileImage != "" ? (
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="w-32 h-32 rounded-full object-cover border-4 border-gray-300 dark:border-black"
+              />
+            ) : (
+              <FaUserCircle className="w-32 h-32 text-gray-400 dark:text-gray-600" />
+            )}
 
-            <span className="inline-block mt-4 rounded-full bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 px-6 py-2 text-sm font-semibold tracking-wide shadow-lg uppercase drop-shadow-md">
-              {user.role}
-            </span>
-
-            <p className="mt-3 text-xs text-pink-200 italic">
-              Joined {user.joined}
-            </p>
+            <label className="absolute bottom-0 right-0 bg-red-600 p-2 rounded-full cursor-pointer shadow-md hover:bg-red-700 transition">
+              <FaUpload className="text-white" />
+              <input
+                type="file"
+                className="hidden"
+                onChange={handleImageChange}
+              />
+            </label>
           </div>
         </div>
 
-        {/* Divider */}
-        <hr className="my-10 border-white/30" />
-
-        {/* Editable Info */}
-        <form className="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-200">
-          {[
-            { label: "Full Name", value: user.name, type: "text" },
-            { label: "Email Address", value: user.email, type: "email" },
-            { label: "Role", value: user.role, disabled: true },
-            { label: "Joined", value: user.joined, disabled: true },
-          ].map(({ label, value, type = "text", disabled }, i) => (
-            <div key={i} className="flex flex-col">
-              <label className="mb-2 font-semibold">{label}</label>
-              <input
-                type={type}
-                defaultValue={value}
-                disabled={disabled}
-                className={`
-                  rounded-xl bg-white/10 border border-white/30 px-4 py-3 placeholder-pink-300 text-white
-                  focus:outline-none focus:ring-2 focus:ring-pink-500 transition
-                  ${
-                    disabled
-                      ? "opacity-60 cursor-not-allowed"
-                      : "hover:border-pink-400"
-                  }
-                `}
-              />
+        {/* Editable Fields */}
+        <div className="space-y-4">
+          {/* Name */}
+          {["name", "email", "password"].map((field) => (
+            <div
+              key={field}
+              className="flex justify-between items-center bg-white dark:bg-black p-4 rounded-lg shadow-md"
+            >
+              <div>
+                <p className="text-sm font-semibold font-Kanit tracking-wider text-gray-500 dark:text-red-600 capitalize">
+                  {field}
+                </p>
+                {editField === field ? (
+                  <input
+                    type={field === "password" ? "password" : "text"}
+                    value={formData[field]}
+                    onChange={(e) => handleChange(field, e.target.value)}
+                    className="mt-1 px-3 py-1 rounded-md border dark:border-gray-600 bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100"
+                  />
+                ) : (
+                  <p className="text-lg">{formData[field]}</p>
+                )}
+              </div>
+              <div className="flex gap-2">
+                {editField === field ? (
+                  <>
+                    <button
+                      onClick={() => handleSave(field)}
+                      className="p-2 bg-green-600 hover:bg-green-700 rounded-md text-white"
+                    >
+                      <FaSave />
+                    </button>
+                    <button
+                      onClick={() => setEditField(null)}
+                      className="p-2 bg-gray-500 hover:bg-gray-600 rounded-md text-white"
+                    >
+                      <FaTimes />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setEditField(field)}
+                    className="p-2 bg-red-600 hover:bg-red-700 rounded-md text-white"
+                  >
+                    <FaEdit />
+                  </button>
+                )}
+              </div>
             </div>
           ))}
-        </form>
 
-        {/* Buttons */}
-        <div className="flex justify-end gap-6 mt-12">
-          <button className="px-7 py-3 rounded-xl bg-pink-700/40 hover:bg-pink-700/60 transition text-white font-semibold shadow-lg drop-shadow-md">
-            Cancel
-          </button>
-          <button className="px-7 py-3 rounded-xl bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-700 hover:brightness-110 transition text-white font-bold shadow-lg drop-shadow-lg">
-            Save Changes
-          </button>
+          {/* Role as Custom Select */}
+          <div className="flex justify-between items-center bg-white dark:bg-black p-4 rounded-lg shadow-md">
+            <div>
+              <p className="text-sm font-semibold font-Kanit tracking-wider text-gray-500 dark:text-red-600">
+                Role
+              </p>
+              {editField === "role" ? (
+                <select
+                  value={formData.role}
+                  onChange={(e) => handleChange("role", e.target.value)}
+                  className="mt-1 px-3 py-1 rounded-md border dark:border-gray-600 bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100"
+                >
+                  <option value="Audience">Audience</option>
+                  <option value="Organizer">Organizer</option>
+                </select>
+              ) : (
+                <p className="text-lg">{formData.role}</p>
+              )}
+            </div>
+            <div className="flex gap-2">
+              {editField === "role" ? (
+                <>
+                  <button
+                    onClick={() => handleSave("role")}
+                    className="p-2 bg-green-600 hover:bg-green-700 rounded-md text-white"
+                  >
+                    <FaSave />
+                  </button>
+                  <button
+                    onClick={() => setEditField(null)}
+                    className="p-2 bg-gray-500 hover:bg-gray-600 rounded-md text-white"
+                  >
+                    <FaTimes />
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setEditField("role")}
+                  className="p-2 bg-red-600 hover:bg-red-700 rounded-md text-white"
+                >
+                  <FaEdit />
+                </button>
+              )}
+            </div>
+          </div>
         </div>
-      </motion.div>
+
+        {/* Quick Links */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+          <Link
+            to="/error"
+            className="flex flex-col items-center bg-white dark:bg-black p-6 rounded-lg shadow-md hover:shadow-lg transition"
+          >
+            <FaTicketAlt className="text-red-500 text-2xl mb-2" />
+            <span className="font-semibold">My Tickets</span>
+          </Link>
+          <Link
+            to="/error"
+            className="flex flex-col items-center bg-white dark:bg-black p-6 rounded-lg shadow-md hover:shadow-lg transition"
+          >
+            <FaCalendarAlt className="text-purple-500 text-2xl mb-2" />
+            <span className="font-semibold">My Events</span>
+          </Link>
+          <Link
+            to="/error"
+            className="flex flex-col items-center bg-white dark:bg-black p-6 rounded-lg shadow-md hover:shadow-lg transition"
+          >
+            <FaCog className="text-blue-500 text-2xl mb-2" />
+            <span className="font-semibold">Settings</span>
+          </Link>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default Profile;
+}
