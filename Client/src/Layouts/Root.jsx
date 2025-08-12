@@ -1,7 +1,7 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/Navbar/Navbar";
 import { Toaster } from "react-hot-toast";
-import FooterSection from "../components/FooterSection";
+import FooterSection from "../components/Footer/FooterSection";
 
 const Root = () => {
   return (

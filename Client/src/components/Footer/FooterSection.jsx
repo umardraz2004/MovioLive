@@ -1,6 +1,6 @@
-import { HelpLinks, QuickLinks, SocialIcons } from "../utils/Data";
+import { HelpLinks, QuickLinks, SocialIcons } from "../../utils/Data";
 import FooterLinks from "./FooterLinks";
-import NavLogo from "../assets/images/NavLogo.png"
+import NavLogo from "../../assets/images/NavLogo.png"
 
 const FooterSection = () => {
   return (

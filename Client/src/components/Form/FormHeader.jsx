@@ -1,4 +1,4 @@
-import NavLogo from "../assets/images/NavLogo.png";
+import NavLogo from "../../assets/images/NavLogo.png";
 
 const FormHeader = ({ title, subtitle, showLogo = true }) => {
   return (

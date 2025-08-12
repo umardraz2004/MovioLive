@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import DecorativeUnderline from "./DecorativeUnderline";
+import DecorativeUnderline from "../DecorativeUnderline";
 
 const FAQSection = ({ faqs }) => {
   const [openFaq, setOpenFaq] = useState(null);

@@ -2,10 +2,12 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { SignupSchema } from "../utils/schema";
-import FormHeader from "../components/FormHeader";
-import FormInput from "../components/FormInput";
-import FormFooterLink from "../components/FormFooterLink";
-import FormSubmittingBtn from "../components/FormSubmittingBtn";
+import FormHeader from "../components/Form/FormHeader";
+import FormInput from "../components/Form/FormInput";
+import FormFooterLink from "../components/Form/FormFooterLink";
+import FormSubmittingBtn from "../components/Form/FormSubmittingBtn";
+import axios from "axios";
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const Signup = () => {
   const {
@@ -17,10 +19,22 @@ const Signup = () => {
   });
 
   const onSubmit = async (data) => {
-    console.log("Form data:", data);
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // simulating API call
-    console.log("Done!");
+    try {
+      console.log("Form data:", data);
+
+      const res = await axios.post(
+        `${baseURL}/api/auth/signup`,
+        data,
+        { withCredentials: true }
+      );
+
+      console.log("Signup successful:", res.data);
+      // Maybe show a verification email message
+    } catch (err) {
+      console.error("Signup error:", err.response?.data || err.message);
+    }
   };
+
   return (
     <div className="flex items-center justify-center min-h-[calc(100vh-4.5rem)] px-4">
       <motion.div

@@ -1,20 +1,19 @@
+import RoleSelector from "../components/Profile/RoleSelector";
+import EditableField from "../components/Profile/EditableField";
+import QuickLinkCard from "../components/Profile/QuickLinkCard";
 import { useState, useContext } from "react";
-import { Link } from "react-router-dom";
 import { ThemeContext } from "../store/ThemeContext";
+import ProfileImageUploader from "../components/Profile/ProfileImageUploader";
 import {
-  FaEdit,
-  FaSave,
-  FaTimes,
-  FaUpload,
   FaTicketAlt,
   FaCalendarAlt,
   FaCog,
   FaMoon,
   FaSun,
-  FaUserCircle,
+  FaSignOutAlt,
 } from "react-icons/fa";
 
-export default function ProfilePage() {
+const Profile = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
 
   const [profileImage, setProfileImage] = useState("");
@@ -26,181 +25,82 @@ export default function ProfilePage() {
     role: "Audience",
   });
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) setProfileImage(URL.createObjectURL(file));
-  };
-
   const handleChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
   };
 
   const handleSave = (field) => {
-    // TODO: Save field to backend
+    // Save to backend later
     setEditField(null);
   };
 
   return (
-    <div className="text-gray-900 dark:text-gray-100 p-6">
+    <div className="relative text-gray-900 dark:text-gray-100 mt-10 mb-16">
       <div className="max-w-4xl mx-auto space-y-8">
-        {/* Top Bar with Theme Toggle */}
-        <div className="flex justify-end">
-          <button
-            onClick={toggleTheme}
-            className="flex items-center gap-2 px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-800 transition"
-          >
-            {theme === "light" ? <FaMoon /> : <FaSun />}
-            {theme === "light" ? "Dark Mode" : "Light Mode"}
-          </button>
-        </div>
+        <ProfileImageUploader
+          profileImage={profileImage}
+          setProfileImage={setProfileImage}
+        />
 
-        {/* Profile Image */}
-        <div className="flex flex-col items-center">
-          <div className="relative group">
-            {profileImage != "" ? (
-              <img
-                src={profileImage}
-                alt="Profile"
-                className="w-32 h-32 rounded-full object-cover border-4 border-gray-300 dark:border-black"
-              />
-            ) : (
-              <FaUserCircle className="w-32 h-32 text-gray-400 dark:text-gray-600" />
-            )}
-
-            <label className="absolute bottom-0 right-0 bg-red-600 p-2 rounded-full cursor-pointer shadow-md hover:bg-red-700 transition">
-              <FaUpload className="text-white" />
-              <input
-                type="file"
-                className="hidden"
-                onChange={handleImageChange}
-              />
-            </label>
-          </div>
-        </div>
-
-        {/* Editable Fields */}
         <div className="space-y-4">
-          {/* Name */}
           {["name", "email", "password"].map((field) => (
-            <div
+            <EditableField
               key={field}
-              className="flex justify-between items-center bg-white dark:bg-black p-4 rounded-lg shadow-md"
-            >
-              <div>
-                <p className="text-sm font-semibold font-Kanit tracking-wider text-gray-500 dark:text-red-600 capitalize">
-                  {field}
-                </p>
-                {editField === field ? (
-                  <input
-                    type={field === "password" ? "password" : "text"}
-                    value={formData[field]}
-                    onChange={(e) => handleChange(field, e.target.value)}
-                    className="mt-1 px-3 py-1 rounded-md border dark:border-gray-600 bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100"
-                  />
-                ) : (
-                  <p className="text-lg">{formData[field]}</p>
-                )}
-              </div>
-              <div className="flex gap-2">
-                {editField === field ? (
-                  <>
-                    <button
-                      onClick={() => handleSave(field)}
-                      className="p-2 bg-green-600 hover:bg-green-700 rounded-md text-white"
-                    >
-                      <FaSave />
-                    </button>
-                    <button
-                      onClick={() => setEditField(null)}
-                      className="p-2 bg-gray-500 hover:bg-gray-600 rounded-md text-white"
-                    >
-                      <FaTimes />
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => setEditField(field)}
-                    className="p-2 bg-red-600 hover:bg-red-700 rounded-md text-white"
-                  >
-                    <FaEdit />
-                  </button>
-                )}
-              </div>
-            </div>
+              field={field}
+              value={formData[field]}
+              editField={editField}
+              setEditField={setEditField}
+              handleChange={handleChange}
+              handleSave={handleSave}
+            />
           ))}
 
-          {/* Role as Custom Select */}
-          <div className="flex justify-between items-center bg-white dark:bg-black p-4 rounded-lg shadow-md">
-            <div>
-              <p className="text-sm font-semibold font-Kanit tracking-wider text-gray-500 dark:text-red-600">
-                Role
-              </p>
-              {editField === "role" ? (
-                <select
-                  value={formData.role}
-                  onChange={(e) => handleChange("role", e.target.value)}
-                  className="mt-1 px-3 py-1 rounded-md border dark:border-gray-600 bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100"
-                >
-                  <option value="Audience">Audience</option>
-                  <option value="Organizer">Organizer</option>
-                </select>
-              ) : (
-                <p className="text-lg">{formData.role}</p>
-              )}
-            </div>
-            <div className="flex gap-2">
-              {editField === "role" ? (
-                <>
-                  <button
-                    onClick={() => handleSave("role")}
-                    className="p-2 bg-green-600 hover:bg-green-700 rounded-md text-white"
-                  >
-                    <FaSave />
-                  </button>
-                  <button
-                    onClick={() => setEditField(null)}
-                    className="p-2 bg-gray-500 hover:bg-gray-600 rounded-md text-white"
-                  >
-                    <FaTimes />
-                  </button>
-                </>
-              ) : (
-                <button
-                  onClick={() => setEditField("role")}
-                  className="p-2 bg-red-600 hover:bg-red-700 rounded-md text-white"
-                >
-                  <FaEdit />
-                </button>
-              )}
-            </div>
+          <RoleSelector
+            role={formData.role}
+            editField={editField}
+            setEditField={setEditField}
+            handleChange={handleChange}
+            handleSave={handleSave}
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              onClick={toggleTheme}
+              className="flex items-center justify-center gap-2 px-4 py-3 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-black hover:bg-gray-200 dark:hover:bg-black/60 transition duration-300"
+            >
+              {theme === "light" ? <FaMoon /> : <FaSun />}
+              {theme === "light" ? "Dark Mode" : "Light Mode"}
+            </button>
+
+            <button
+              onClick={() => {}}
+              className="flex items-center justify-center gap-2 px-4 py-3 rounded-md border border-red-500 bg-red-600 text-white hover:bg-red-700 transition duration-300"
+            >
+              <FaSignOutAlt />
+              Logout
+            </button>
           </div>
         </div>
 
-        {/* Quick Links */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-          <Link
+          <QuickLinkCard
             to="/error"
-            className="flex flex-col items-center bg-white dark:bg-black p-6 rounded-lg shadow-md hover:shadow-lg transition"
-          >
-            <FaTicketAlt className="text-red-500 text-2xl mb-2" />
-            <span className="font-semibold">My Tickets</span>
-          </Link>
-          <Link
+            icon={<FaTicketAlt className="text-red-500 text-2xl mb-2" />}
+            label="My Tickets"
+          />
+          <QuickLinkCard
             to="/error"
-            className="flex flex-col items-center bg-white dark:bg-black p-6 rounded-lg shadow-md hover:shadow-lg transition"
-          >
-            <FaCalendarAlt className="text-purple-500 text-2xl mb-2" />
-            <span className="font-semibold">My Events</span>
-          </Link>
-          <Link
+            icon={<FaCalendarAlt className="text-purple-500 text-2xl mb-2" />}
+            label="My Events"
+          />
+          <QuickLinkCard
             to="/error"
-            className="flex flex-col items-center bg-white dark:bg-black p-6 rounded-lg shadow-md hover:shadow-lg transition"
-          >
-            <FaCog className="text-blue-500 text-2xl mb-2" />
-            <span className="font-semibold">Settings</span>
-          </Link>
+            icon={<FaCog className="text-blue-500 text-2xl mb-2" />}
+            label="Reset Password"
+          />
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Profile;

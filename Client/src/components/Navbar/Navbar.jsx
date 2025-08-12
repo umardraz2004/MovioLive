@@ -1,12 +1,13 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import { LuSun } from "react-icons/lu";
 import { BsFillMoonStarsFill } from "react-icons/bs";
 import { AnimatePresence, motion } from "framer-motion";
-import NavLogo from "../assets/images/NavLogo.png";
+import NavLogo from "../../assets/images/NavLogo.png";
 import NavMenu from "./NavMenu";
 import { FaUserCircle } from "react-icons/fa";
+import { useAuth } from "../../store/AuthContext";
 const user = {
   name: "John Doe",
   email: "john@example.com",
@@ -17,18 +18,18 @@ const user = {
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, user, logout } = useAuth();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isOrganizer, setIsOrganizer] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("movioUser"));
     if (user) {
       setIsLoggedIn(true);
       setIsOrganizer(user.role === "organizer");
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 100);
@@ -43,15 +44,6 @@ const Navbar = () => {
 
   const toggleMenu = () => setMenuOpen((s) => !s);
   const closeMenu = () => setMenuOpen(false);
-
-  const handleLogout = () => {
-    localStorage.removeItem("movioUser");
-    setIsLoggedIn(false);
-    setIsOrganizer(false);
-    navigate("/login");
-    closeMenu();
-  };
-
   return (
     <nav className={`sticky top-0 z-50`}>
       <div
@@ -78,7 +70,7 @@ const Navbar = () => {
           <NavMenu
             isLoggedIn={isLoggedIn}
             isOrganizer={isOrganizer}
-            handleLogout={handleLogout}
+            handleLogout={logout}
           />
           <div className="flex items-center">
             <Link

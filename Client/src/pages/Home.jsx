@@ -1,13 +1,13 @@
 import "../styles/Home.css";
-import FAQSection from "../components/FAQSection";
-import AboutImage from "../assets/images/about.png";
-import HeroSection from "../components/HeroSection";
-import AboutSection from "../components/AboutSection";
-import { FeaturesData, FaqsData, AboutSectionData } from "../utils/Data";
-import JoinCtaSection from "../components/JoinCtaSection";
-import FeaturesSection from "../components/FeaturesSection";
 import { FaArrowUp } from "react-icons/fa";
 import { useEffect, useState } from "react";
+import AboutImage from "../assets/images/about.png";
+import FAQSection from "../components/Home/FAQSection";
+import HeroSection from "../components/Home/HeroSection";
+import AboutSection from "../components/Home/AboutSection";
+import JoinCtaSection from "../components/Home/JoinCtaSection";
+import FeaturesSection from "../components/Home/FeaturesSection";
+import { FeaturesData, FaqsData, AboutSectionData } from "../utils/Data";
 
 const Home = () => {
   const [showScrollButton, setShowScrollButton] = useState(false);

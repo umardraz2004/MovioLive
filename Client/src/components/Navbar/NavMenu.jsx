@@ -1,13 +1,6 @@
 import NavLink from "./NavLink";
-import HoverUnderlineButton from "./HoverUnderLineButton";
-import { Link } from "react-router-dom";
-const user = {
-  name: "John Doe",
-  email: "john@example.com",
-  role: "Organizer",
-  avatar: "https://i.pravatar.cc/150?img=12",
-  joined: "March 2024",
-};
+import HoverUnderlineButton from "../HoverUnderLineButton";
+
 const NavMenu = ({ isLoggedIn, isOrganizer, handleLogout, closeMenu }) => {
   return (
     <>

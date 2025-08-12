@@ -2,12 +2,19 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LoginSchema } from "../utils/schema";
-import FormHeader from "../components/FormHeader";
-import FormInput from "../components/FormInput";
-import FormFooterLink from "../components/FormFooterLink";
-import FormSubmittingBtn from "../components/FormSubmittingBtn";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../store/AuthContext";
+import FormHeader from "../components/Form/FormHeader";
+import FormInput from "../components/Form/FormInput";
+import FormFooterLink from "../components/Form/FormFooterLink";
+import FormSubmittingBtn from "../components/Form/FormSubmittingBtn";
+import axios from "axios";
+const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { loginUser } = useAuth();
+
   const {
     register,
     handleSubmit,
@@ -17,10 +24,32 @@ const Login = () => {
   });
 
   // ✅ Form submit handler
- const onSubmit = async (data) => {
-    console.log("Form data:", data);
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // simulating API call
-    console.log("Done!");
+  const onSubmit = async (data) => {
+    try {
+      // setLoading(true);
+
+      console.log("Form data:", data);
+
+      const res = await axios.post(
+        `${baseURL}/api/auth/login`, // your backend login route
+        data,
+        { withCredentials: true } // ✅ ensures cookies are sent/received
+      );
+      const { user } = res.data;
+      console.log(user);
+
+      loginUser(user);
+
+      console.log("Login response:", res.data);
+
+      // ✅ redirect after successful login
+      navigate("/");
+    } catch (err) {
+      console.error("Login error:", err.response?.data || err.message);
+      // optional: show error to user
+    } finally {
+      // setLoading(false);
+    }
   };
 
   return (

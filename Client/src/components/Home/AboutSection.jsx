@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import DecorativeUnderline from "./DecorativeUnderline";
+import DecorativeUnderline from "../DecorativeUnderline";
 
 const AboutSection = ({ AboutImage, data }) => {
   return (

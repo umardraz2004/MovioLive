@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import FormHeader from "../components/FormHeader";
-import FormInput from "../components/FormInput";
+import FormHeader from "../components/Form/FormHeader";
+import FormInput from "../components/Form/FormInput";
 import { contactSchema } from "../utils/schema";
-import FormSubmittingBtn from "../components/FormSubmittingBtn";
+import FormSubmittingBtn from "../components/Form/FormSubmittingBtn";
 
 const Contact = () => {
   const {
