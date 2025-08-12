@@ -25,7 +25,7 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => setIsSticky(window.scrollY > 20);
+    const handleScroll = () => setIsSticky(window.scrollY > 100);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -47,14 +47,14 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50">
+    <nav className={`sticky top-0 z-50`}>
       <div
         className={`w-full px-6 py-4 flex justify-between items-center
-        transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]
+        transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] 
         ${
           isSticky
             ? "bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-md opacity-95"
-            : "bg-white dark:bg-black"
+            : "bg-white dark:bg-black opacity-100"
         }`}
       >
         {/* Logo */}

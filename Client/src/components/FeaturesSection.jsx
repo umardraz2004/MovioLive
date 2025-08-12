@@ -36,12 +36,7 @@ const FeaturesSection = ({ features }) => {
             viewport={{ once: true, amount: 0.3 }}
             whileHover={{ y: -5 }}
           >
-            <div
-              className="w-14 h-14 rounded-lg flex items-center justify-center text-white shadow-md"
-              style={{
-                background: "linear-gradient(135deg,#ef4444,#7c3aed)",
-              }}
-            >
+            <div className="w-14 h-14 rounded-lg flex items-center justify-center text-white shadow-md bg-gradient-to-br from-red-600 to-red-900">
               <f.icon size={f.size} />
             </div>
             <h4 className="mt-4 font-semibold text-lg">{f.title}</h4>

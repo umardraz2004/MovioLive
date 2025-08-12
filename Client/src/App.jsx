@@ -5,6 +5,7 @@ import Error from "./pages/Error";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Contact from "./pages/Contact";
+import Profile from "./pages/Profile";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,7 @@ const router = createBrowserRouter([
       { path: '/login', element: <Login /> },
       { path: '/signup', element: <Signup /> },
       { path: '/contact', element: <Contact /> },
+      { path: '/profile', element: <Profile /> },
     ],
   },
 ]);
