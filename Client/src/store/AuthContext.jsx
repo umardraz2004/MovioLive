@@ -4,16 +4,20 @@ import {
   useReducer,
   useEffect,
   useRef,
+  useState,
 } from "react";
-import { showToast } from "../utils/toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 const INACTIVITY_LIMIT = 15 * 60 * 1000;
 
 export const AuthContext = createContext({
   user: null,
   isAuthenticated: false,
+  loading: true,
   loginUser: () => {},
   logout: () => {},
+  updateAvatar: () => {},
+  updatingAvatar: false,
 });
 
 function authReducer(state, action) {
@@ -28,6 +32,13 @@ function authReducer(state, action) {
         user: action.payload.user,
         isAuthenticated: !!action.payload.user,
       };
+    case "UPDATE_AVATAR":
+      return {
+        ...state,
+        user: state.user
+          ? { ...state.user, avatar: action.payload.avatar }
+          : state.user,
+      };
     default:
       return state;
   }
@@ -38,7 +49,9 @@ export function AuthProvider({ children }) {
     user: null,
     isAuthenticated: false,
   });
+  const [loading, setLoading] = useState(true);
 
+  const queryClient = useQueryClient(); // ⬅️ was missing
   const inactivityTimerRef = useRef(null);
 
   const resetInactivityTimer = () => {
@@ -50,25 +63,23 @@ export function AuthProvider({ children }) {
     }, INACTIVITY_LIMIT);
   };
 
-  // Load user from API (cookie handled automatically by browser)
+  // Load current user
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_BASE_URL}/api/auth/me`, {
-      credentials: "include", // important: sends the cookie
+      credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
         if (data?.user) {
           dispatch({ type: "LOAD_USER", payload: { user: data.user } });
-
           if (!localStorage.getItem("lastActivity")) {
             localStorage.setItem("lastActivity", Date.now().toString());
           }
           resetInactivityTimer();
         }
       })
-      .catch(() => {
-        // not logged in or server error
-      });
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -77,7 +88,6 @@ export function AuthProvider({ children }) {
       events.forEach((event) =>
         window.addEventListener(event, resetInactivityTimer)
       );
-
       return () => {
         events.forEach((event) =>
           window.removeEventListener(event, resetInactivityTimer)
@@ -88,10 +98,31 @@ export function AuthProvider({ children }) {
     }
   }, [authState.isAuthenticated]);
 
+  // Avatar upload mutation
+  const avatarMutation = useMutation({
+    mutationFn: async (base64Image) => {
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/users/upload-avatar`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ userId: authState.user._id , image: base64Image }),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to upload avatar");
+      return data;
+    },
+    onSuccess: (data) => {
+      dispatch({ type: "UPDATE_AVATAR", payload: { avatar: data.avatar } });
+      // Optional: invalidate any user query you might have elsewhere
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+
   function loginUser(user) {
-    console.log("before usee check");
     if (!user) return;
-    console.log("after usee check");
     dispatch({ type: "LOGIN", payload: { user } });
     localStorage.setItem("lastActivity", Date.now().toString());
   }
@@ -111,6 +142,9 @@ export function AuthProvider({ children }) {
   const ctxValue = {
     user: authState.user,
     isAuthenticated: authState.isAuthenticated,
+    loading,
+    updateAvatar: avatarMutation.mutate,
+    updatingAvatar: avatarMutation.isLoading,
     loginUser,
     logout,
   };

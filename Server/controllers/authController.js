@@ -81,7 +81,7 @@ export const login = async (req, res) => {
 
     return res.status(200).json({
       message: "Login successful",
-      user: { id: user._id, fullName: user.fullName, email: user.email },
+      user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role },
     });
   } catch (err) {
     console.error("Login error:", err);
@@ -135,6 +135,7 @@ export const verifyEmail = async (req, res) => {
         id: result._id,
         fullName: result.fullName,
         email: result.email,
+        role: result.role,
         verified: result.verified,
       },
     });

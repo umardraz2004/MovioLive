@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
 import VerifyEmail from "./pages/VerifyEmail";
+import PrivateRoute from "./components/PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -15,10 +16,18 @@ const router = createBrowserRouter([
     errorElement: <Error />,
     children: [
       { index: true, element: <Home /> },
-      { path: '/login', element: <Login /> },
-      { path: '/signup', element: <Signup /> },
-      { path: '/contact', element: <Contact /> },
-      { path: '/profile', element: <Profile /> },
+      { path: "/login", element: <Login /> },
+      { path: "/signup", element: <Signup /> },
+      { path: "/contact", element: <Contact /> },
+      {
+        path: "/profile",
+        element: (
+          <PrivateRoute>
+            {" "}
+            <Profile />
+          </PrivateRoute>
+        ),
+      },
       { path: "/verify-email", element: <VerifyEmail /> },
     ],
   },

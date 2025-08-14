@@ -25,6 +25,9 @@ const Home = () => {
   };
   return (
     <div className="min-h-screen text-gray-900 dark:text-gray-100">
+      <div >
+
+      </div>
       {/* HERO */}
       <HeroSection />
       <main className="mt-20">

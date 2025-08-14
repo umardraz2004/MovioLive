@@ -21,6 +21,8 @@ const EditableField = ({
             onChange={(e) => handleChange(field, e.target.value)}
             className="mt-1 px-3 py-1 rounded-md border border-gray-200 dark:border-gray-600 bg-gray-200 dark:bg-black text-gray-900 dark:outline-none outline-gray-300 dark:text-gray-100"
           />
+        ) : field == "password" ? (
+          <p className="text-lg">***********</p>
         ) : (
           <p className="text-lg">{value}</p>
         )}

@@ -4,6 +4,7 @@ import QuickLinkCard from "../components/Profile/QuickLinkCard";
 import { useState, useContext } from "react";
 import { ThemeContext } from "../store/ThemeContext";
 import ProfileImageUploader from "../components/Profile/ProfileImageUploader";
+import { useAuth } from "../store/AuthContext";
 import {
   FaTicketAlt,
   FaCalendarAlt,
@@ -15,15 +16,9 @@ import {
 
 const Profile = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
-
-  const [profileImage, setProfileImage] = useState("");
+  const { user, logout, updateAvatar } = useAuth();
   const [editField, setEditField] = useState(null);
-  const [formData, setFormData] = useState({
-    name: "John Doe",
-    email: "johndoe@email.com",
-    password: "********",
-    role: "Audience",
-  });
+  const [formData, setFormData] = useState(user);
 
   const handleChange = (field, value) => {
     setFormData({ ...formData, [field]: value });
@@ -33,17 +28,17 @@ const Profile = () => {
     // Save to backend later
     setEditField(null);
   };
-
+  const avatarUrl = user?.avatar?.url;
   return (
-    <div className="relative text-gray-900 dark:text-gray-100 mt-10 mb-16">
+    <div className="relative text-gray-900 dark:text-gray-100 mt-10 mb-16 px-5">
       <div className="max-w-4xl mx-auto space-y-8">
         <ProfileImageUploader
-          profileImage={profileImage}
-          setProfileImage={setProfileImage}
+          currentAvatar={avatarUrl} // string only
+          onAvatarChange={updateAvatar}
         />
 
         <div className="space-y-4">
-          {["name", "email", "password"].map((field) => (
+          {["fullName", "email", "password"].map((field) => (
             <EditableField
               key={field}
               field={field}
@@ -72,7 +67,7 @@ const Profile = () => {
             </button>
 
             <button
-              onClick={() => {}}
+              onClick={logout}
               className="flex items-center justify-center gap-2 px-4 py-3 rounded-md border border-red-500 bg-red-600 text-white hover:bg-red-700 transition duration-300"
             >
               <FaSignOutAlt />

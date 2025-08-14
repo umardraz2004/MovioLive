@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
 import { LuSun } from "react-icons/lu";
 import { BsFillMoonStarsFill } from "react-icons/bs";
@@ -8,16 +8,8 @@ import NavLogo from "../../assets/images/NavLogo.png";
 import NavMenu from "./NavMenu";
 import { FaUserCircle } from "react-icons/fa";
 import { useAuth } from "../../store/AuthContext";
-const user = {
-  name: "John Doe",
-  email: "john@example.com",
-  role: "Organizer",
-  avatar: "",
-  joined: "March 2024",
-};
 
 const Navbar = () => {
-  const navigate = useNavigate();
   const { isAuthenticated, user, logout } = useAuth();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isOrganizer, setIsOrganizer] = useState(false);
@@ -37,19 +29,31 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // lock background scroll while sidebar open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
   }, [menuOpen]);
 
   const toggleMenu = () => setMenuOpen((s) => !s);
   const closeMenu = () => setMenuOpen(false);
+
+  // reusable avatar JSX
+  const UserAvatar = () => {
+    const avatarUrl = user?.avatar?.url;
+    return avatarUrl ? (
+      <img
+        src={avatarUrl}
+        alt={user?.name || "User"}
+        className="w-10 h-10 rounded-full object-cover"
+      />
+    ) : (
+      <FaUserCircle className="w-10 h-10 text-gray-400 dark:text-gray-600" />
+    );
+  };
+
   return (
-    <nav className={`sticky top-0 z-50`}>
+    <nav className="sticky top-0 z-50">
       <div
-        className={`w-full px-6 py-4 flex justify-between items-center
-        transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] 
-        ${
+        className={`w-full px-6 py-4 flex justify-between items-center transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${
           isSticky
             ? "bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-md opacity-95"
             : "bg-white dark:bg-black opacity-100"
@@ -72,25 +76,19 @@ const Navbar = () => {
             isOrganizer={isOrganizer}
             handleLogout={logout}
           />
-          <div className="flex items-center">
-            <Link
-              to="/profile"
-              onClick={closeMenu}
-              className="rounded-full border-2 border-red-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              aria-label="User Profile"
-              draggable={false}
-            >
-              {user?.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name || "User"}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              ) : (
-                <FaUserCircle className="w-10 h-10 text-gray-400 dark:text-gray-600" />
-              )}
-            </Link>
-          </div>
+          {isAuthenticated && (
+            <div className="flex items-center">
+              <Link
+                to="/profile"
+                onClick={closeMenu}
+                className="rounded-full border-2 border-red-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                aria-label="User Profile"
+                draggable={false}
+              >
+                <UserAvatar />
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Mobile Hamburger */}
@@ -104,11 +102,12 @@ const Navbar = () => {
           </button>
         </div>
       </div>
+
       {/* Sidebar Overlay & Panel */}
       <AnimatePresence>
         {menuOpen && (
           <>
-            {/* Dimmed Background Overlay */}
+            {/* Dimmed Overlay */}
             <motion.div
               key="overlay"
               initial={{ opacity: 0 }}
@@ -126,43 +125,33 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ duration: 0.35, ease: [0.25, 0.8, 0.25, 1] }}
-              className="fixed top-0 right-0 w-72 h-full 
-                   bg-white/90 dark:bg-black/90
-                   shadow-2xl shadow-black/40
-                   z-50 p-6 flex flex-col justify-between
-                   rounded-l-2xl border-l border-gray-200 dark:border-gray-700"
+              className="fixed top-0 right-0 w-72 h-full bg-white/90 dark:bg-black/90 shadow-2xl shadow-black/40 z-50 p-6 flex flex-col justify-between rounded-l-2xl border-l border-gray-200 dark:border-gray-700"
             >
               {/* Navigation Links */}
               <div className="flex flex-col space-y-4">
                 <NavMenu
                   isLoggedIn={isLoggedIn}
                   isOrganizer={isOrganizer}
-                  handleLogout={handleLogout}
+                  handleLogout={logout}
                   closeMenu={closeMenu}
                 />
               </div>
-              <div className="flex items-center justify-between border-t-2 pt-5 border-gray-900 dark:border-white">
-                <div className="font-semibold font-WorkSans text-red-600 dark:text-white">
-                  Your Profile
+              {isAuthenticated && (
+                <div className="flex items-center justify-between border-t-2 pt-5 border-gray-900 dark:border-white">
+                  <div className="font-semibold font-WorkSans text-red-600 dark:text-white">
+                    Your Profile
+                  </div>
+                  <Link
+                    to="/profile"
+                    onClick={closeMenu}
+                    className="rounded-full border-2 border-red-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    aria-label="User Profile"
+                    draggable={false}
+                  >
+                    <UserAvatar />
+                  </Link>
                 </div>
-                <Link
-                  to="/profile"
-                  onClick={closeMenu}
-                  className="rounded-full border-2 border-red-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                  aria-label="User Profile"
-                  draggable={false}
-                >
-                  {user?.avatar ? (
-                    <img
-                      src={user.avatar}
-                      alt={user.name || "User"}
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <FaUserCircle className="w-10 h-10 text-gray-400 dark:text-gray-600" />
-                  )}
-                </Link>
-              </div>
+              )}
             </motion.div>
           </>
         )}
@@ -170,14 +159,5 @@ const Navbar = () => {
     </nav>
   );
 };
-
-const ThemeToggleButton = ({ onClick, theme }) => (
-  <button
-    onClick={onClick}
-    className="mx-2 text-xl transition-all text-gray-700 dark:text-gray-200 cursor-pointer"
-  >
-    {theme === "light" ? <BsFillMoonStarsFill /> : <LuSun />}
-  </button>
-);
 
 export default Navbar;

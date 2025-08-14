@@ -36,7 +36,7 @@ export default function VerifyEmail() {
         }
 
         setStatus("✅ Email verified successfully! Redirecting...");
-        navigate("/", { replace: true });
+        navigate("/");
       } catch (e) {
         if (cancelled) return;
         const msg =

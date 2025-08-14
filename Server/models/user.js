@@ -17,7 +17,25 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    verified: { type: Boolean, default: false },
+    role: {
+      type: String,
+      enum: ["Audience", "Organizer"],
+      default: "Audience",
+    },
+    avatar: {
+      url: {
+        type: String,
+        default: "",
+      },
+      public_id: {
+        type: String,
+        default: "",
+      },
+    },
+    verified: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );
