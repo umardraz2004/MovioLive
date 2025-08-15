@@ -1,7 +1,7 @@
 import { FaEdit, FaSave, FaTimes } from "react-icons/fa";
 
 const RoleSelector = ({
-  role,
+  roles,
   editField,
   setEditField,
   handleChange,
@@ -11,26 +11,29 @@ const RoleSelector = ({
     <div className="flex justify-between items-center bg-white dark:bg-black p-4 rounded-lg shadow-md">
       <div>
         <p className="text-sm font-semibold font-Kanit tracking-wider text-gray-500 dark:text-red-600">
-          Role
+          Roles
         </p>
-        {editField === "role" ? (
+        {editField === "roles" ? (
           <select
-            value={role}
-            onChange={(e) => handleChange("role", e.target.value)}
+            value={roles[0]}
+            onChange={(e) => handleChange("roles", e.target.value)}
             className="mt-1 px-3 py-1 rounded-md border dark:border-gray-600 bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100"
           >
-            <option value="Audience">Audience</option>
-            <option value="Organizer">Organizer</option>
+            {roles.map((role, index) => (
+              <option key={index + 1} value={role}>
+                {role}
+              </option>
+            ))}
           </select>
         ) : (
-          <p className="text-lg">{role}</p>
+          <p className="text-lg">{roles}</p>
         )}
       </div>
       <div className="flex gap-2">
-        {editField === "role" ? (
+        {editField === "roles" ? (
           <>
             <button
-              onClick={() => handleSave("role")}
+              onClick={() => handleSave("roles")}
               className="p-2 bg-green-600 hover:bg-green-700 rounded-md text-white"
             >
               <FaSave />
@@ -44,7 +47,7 @@ const RoleSelector = ({
           </>
         ) : (
           <button
-            onClick={() => setEditField("role")}
+            onClick={() => setEditField("roles")}
             className="p-2 bg-red-600 hover:bg-red-700 rounded-md text-white"
           >
             <FaEdit />

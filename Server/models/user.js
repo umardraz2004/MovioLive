@@ -17,10 +17,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    role: {
-      type: String,
+    roles: {
+      type: [String],
       enum: ["Audience", "Organizer"],
-      default: "Audience",
+      default: ["Audience"],
     },
     avatar: {
       url: {

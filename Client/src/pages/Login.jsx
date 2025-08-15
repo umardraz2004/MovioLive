@@ -28,19 +28,14 @@ const Login = () => {
     try {
       // setLoading(true);
 
-      console.log("Form data:", data);
-
       const res = await axios.post(
         `${baseURL}/api/auth/login`, // your backend login route
         data,
         { withCredentials: true } // ✅ ensures cookies are sent/received
       );
       const { user } = res.data;
-      console.log(user);
 
       loginUser(user);
-
-      console.log("Login response:", res.data);
 
       // ✅ redirect after successful login
       navigate("/");

@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { FiMenu, FiX } from "react-icons/fi";
-import { LuSun } from "react-icons/lu";
-import { BsFillMoonStarsFill } from "react-icons/bs";
 import { AnimatePresence, motion } from "framer-motion";
 import NavLogo from "../../assets/images/NavLogo.png";
 import NavMenu from "./NavMenu";
@@ -11,17 +9,11 @@ import { useAuth } from "../../store/AuthContext";
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isOrganizer, setIsOrganizer] = useState(false);
+  const isLoggedIn = !!user;
+  const isOrganizer = user?.role === "organizer";
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      setIsLoggedIn(true);
-      setIsOrganizer(user.role === "organizer");
-    }
-  }, [user]);
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 100);
@@ -76,7 +68,7 @@ const Navbar = () => {
             isOrganizer={isOrganizer}
             handleLogout={logout}
           />
-          {isAuthenticated && (
+          {isAuthenticated && isLoggedIn && (
             <div className="flex items-center">
               <Link
                 to="/profile"
@@ -136,7 +128,7 @@ const Navbar = () => {
                   closeMenu={closeMenu}
                 />
               </div>
-              {isAuthenticated && (
+              {isAuthenticated && isLoggedIn && (
                 <div className="flex items-center justify-between border-t-2 pt-5 border-gray-900 dark:border-white">
                   <div className="font-semibold font-WorkSans text-red-600 dark:text-white">
                     Your Profile

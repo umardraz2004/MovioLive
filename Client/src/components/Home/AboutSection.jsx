@@ -5,7 +5,7 @@ const AboutSection = ({ AboutImage, data }) => {
   return (
     <motion.section
       id="about"
-      className="mx-auto px-6 lg:px-12 mb-20"
+      className="mx-auto px-6 lg:px-12 mb-20 overflow-hidden"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}

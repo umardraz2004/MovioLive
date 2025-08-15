@@ -51,7 +51,7 @@ const Profile = () => {
           ))}
 
           <RoleSelector
-            role={formData.role}
+            roles={formData.roles}
             editField={editField}
             setEditField={setEditField}
             handleChange={handleChange}

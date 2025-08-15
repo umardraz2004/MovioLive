@@ -44,7 +44,7 @@ const EditableField = ({
             </button>
           </>
         ) : (
-          field != "password" && (
+          field != "password" && field != "email" && (
             <button
               onClick={() => setEditField(field)}
               className="p-2 bg-red-600 hover:bg-red-700 rounded-md text-white"

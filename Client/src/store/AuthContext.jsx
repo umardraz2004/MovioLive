@@ -135,7 +135,6 @@ export function AuthProvider({ children }) {
       localStorage.removeItem("lastActivity");
       clearTimeout(inactivityTimerRef.current);
       dispatch({ type: "LOGOUT" });
-      window.location.reload();
     });
   }
 
