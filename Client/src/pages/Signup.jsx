@@ -7,6 +7,7 @@ import FormInput from "../components/Form/FormInput";
 import FormFooterLink from "../components/Form/FormFooterLink";
 import FormSubmittingBtn from "../components/Form/FormSubmittingBtn";
 import axios from "axios";
+import { showToast } from "../utils/toast";
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const Signup = () => {
@@ -20,18 +21,13 @@ const Signup = () => {
 
   const onSubmit = async (data) => {
     try {
-      console.log("Form data:", data);
-
-      const res = await axios.post(
-        `${baseURL}/api/auth/signup`,
-        data,
-        { withCredentials: true }
-      );
-
-      console.log("Signup successful:", res.data);
-      // Maybe show a verification email message
+      const res = await axios.post(`${baseURL}/api/auth/signup`, data, {
+        withCredentials: true,
+      });
+      if (res.status == 200) showToast(res.data.message, "success");
     } catch (err) {
-      console.error("Signup error:", err.response?.data || err.message);
+      if (err.response.status == 400)
+        showToast(err.response.data.message, "error");
     }
   };
 
@@ -96,7 +92,7 @@ const Signup = () => {
           <FormSubmittingBtn
             BtnText={"Sign Up"}
             isDisabled={isSubmitting}
-            loadingText={"Signing Up..."}
+            loadingText={"Sending verification link..."}
           />
         </form>
 

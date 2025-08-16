@@ -4,8 +4,8 @@ import { FiMenu, FiX } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import NavLogo from "../../assets/images/NavLogo.png";
 import NavMenu from "./NavMenu";
-import { FaUserCircle } from "react-icons/fa";
 import { useAuth } from "../../store/AuthContext";
+import UserAvatar from "./UserAvatar";
 
 const Navbar = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -27,20 +27,6 @@ const Navbar = () => {
 
   const toggleMenu = () => setMenuOpen((s) => !s);
   const closeMenu = () => setMenuOpen(false);
-
-  // reusable avatar JSX
-  const UserAvatar = () => {
-    const avatarUrl = user?.avatar?.url;
-    return avatarUrl ? (
-      <img
-        src={avatarUrl}
-        alt={user?.name || "User"}
-        className="w-10 h-10 rounded-full object-cover"
-      />
-    ) : (
-      <FaUserCircle className="w-10 h-10 text-gray-400 dark:text-gray-600" />
-    );
-  };
 
   return (
     <nav className="sticky top-0 z-50">
@@ -73,7 +59,7 @@ const Navbar = () => {
               <Link
                 to="/profile"
                 onClick={closeMenu}
-                className="rounded-full border-2 border-red-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                className="rounded-full border-2 border-red-500 outline-0"
                 aria-label="User Profile"
                 draggable={false}
               >

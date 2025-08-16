@@ -8,6 +8,7 @@ import FormHeader from "../components/Form/FormHeader";
 import FormInput from "../components/Form/FormInput";
 import FormFooterLink from "../components/Form/FormFooterLink";
 import FormSubmittingBtn from "../components/Form/FormSubmittingBtn";
+import { showToast } from "../utils/toast.js";
 import axios from "axios";
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
@@ -40,7 +41,7 @@ const Login = () => {
       // ✅ redirect after successful login
       navigate("/");
     } catch (err) {
-      console.error("Login error:", err.response?.data || err.message);
+      if(err.response.status == 400) showToast(err.response.data.message, "error")
       // optional: show error to user
     } finally {
       // setLoading(false);

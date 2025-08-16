@@ -1,4 +1,5 @@
 import { FaEdit, FaSave, FaTimes } from "react-icons/fa";
+import { showToast } from "../../utils/toast";
 
 const EditableField = ({
   field,
@@ -37,14 +38,18 @@ const EditableField = ({
               <FaSave />
             </button>
             <button
-              onClick={() => setEditField(null)}
+              onClick={() => {
+                setEditField(null);
+                showToast("Editing canceled!");
+              }}
               className="p-2 bg-gray-500 hover:bg-gray-600 rounded-md text-white"
             >
               <FaTimes />
             </button>
           </>
         ) : (
-          field != "password" && field != "email" && (
+          field != "password" &&
+          field != "email" && (
             <button
               onClick={() => setEditField(field)}
               className="p-2 bg-red-600 hover:bg-red-700 rounded-md text-white"

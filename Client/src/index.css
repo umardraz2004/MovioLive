@@ -56,6 +56,15 @@
     animation: gradient-move 2s linear infinite;
 }
 
+@keyframes spin-slow {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
+}
 
 
 @import "tailwindcss";

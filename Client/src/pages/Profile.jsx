@@ -24,7 +24,7 @@ const Profile = () => {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleSave = (field) => {
+  const handleSave = () => {
     // Save to backend later
     setEditField(null);
   };

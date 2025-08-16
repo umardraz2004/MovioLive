@@ -3,9 +3,11 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 import { sendVerificationEmail } from "../utils/sendVerificationEmail.js";
+import PendingUser from "../models/pendingUser.js";
 dotenv.config();
 
-// Helper to sign short-lived verification token containing user payload (hashed password only)
+const JWT_SECRET = process.env.JWT_SECRET;
+
 const makeVerifyToken = ({ fullName, email, passwordHash }) => {
   const payload = {
     purpose: "email-verify",
@@ -13,39 +15,63 @@ const makeVerifyToken = ({ fullName, email, passwordHash }) => {
     fullName,
     passwordHash, // bcrypt hash only
   };
-  return jwt.sign(
-    payload,
-    process.env.JWT_VERIFY_SECRET || process.env.JWT_SECRET,
-    {
-      expiresIn: "30m", // short-lived
-    }
-  );
+  return jwt.sign(payload, JWT_SECRET, {
+    expiresIn: "10m", // short-lived
+  });
 };
 
 export const signUp = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
+    const lowerEmail = email.toLowerCase();
 
-    // If a real user already exists with this email, block early
-    const exists = await User.findOne({ email: email.toLowerCase() });
-    if (exists) {
+    // Check if user exists
+    if (await User.findOne({ email: lowerEmail })) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Hash the password now (hash goes inside the verification token)
+    // Check pending user
+    const existingPending = await PendingUser.findOne({ email: lowerEmail });
+    if (existingPending) {
+      if (existingPending.expiresAt > new Date()) {
+        return res.status(400).json({
+          message:
+            "A verification link was already sent. Please check your email.",
+        });
+      } else {
+        await PendingUser.deleteOne({ email: lowerEmail }); // remove expired
+      }
+    }
+
+    // Hash password
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    const verifyToken = makeVerifyToken({ fullName, email, passwordHash });
+    // Create token & save pending user
+    const verificationToken = makeVerifyToken({
+      fullName,
+      email: lowerEmail,
+      passwordHash,
+    });
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    await sendVerificationEmail(email, verifyToken); // link includes token
+    await PendingUser.create({
+      fullName,
+      email: lowerEmail,
+      password: passwordHash,
+      verificationToken,
+      expiresAt,
+    });
+
+    await sendVerificationEmail(lowerEmail, verificationToken);
+
     return res.status(200).json({
       message:
-        "Check your email to verify your account. The link expires in 30 minutes.",
+        "Check your email to verify your account. The link expires in 10 minutes.",
     });
   } catch (err) {
-    console.error("Register error:", err);
-    return res.status(500).json({ message: "Server error" });
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -54,7 +80,7 @@ export const login = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+    if (!user) return res.status(400).json({ message: "User doesn't exist!" });
 
     if (!user.verified) {
       return res
@@ -67,14 +93,14 @@ export const login = async (req, res) => {
 
     const token = jwt.sign(
       { id: user._id, fullName: user.fullName },
-      process.env.JWT_SECRET,
+      JWT_SECRET,
       { expiresIn: "1d" }
     );
 
     // Send JWT as HTTP-only cookie
     res.cookie("token", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // only over HTTPS in prod
+      secure: process.env.NODE_ENV, // only over HTTPS in prod
       sameSite: "strict", // protect against CSRF
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
@@ -99,54 +125,74 @@ export const verifyEmail = async (req, res) => {
   const { token } = req.body;
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
+    // 1️⃣ Verify JWT first (fail fast)
+    const decoded = jwt.verify(token, JWT_SECRET);
     if (decoded.purpose !== "email-verify") {
       return res.status(400).json({ message: "Invalid verification token" });
     }
 
-    const email = decoded.email.toLowerCase();
+    // 2️⃣ Find pending user
+    const pendingUser = await PendingUser.findOne({
+      email: decoded.email,
+      verificationToken: token,
+      expiresAt: { $gt: new Date() },
+    });
 
-    // Update or insert user
-    const result = await User.findOneAndUpdate(
-      { email },
-      {
-        $set: { verified: true },
-        $setOnInsert: {
-          fullName: decoded.fullName,
-          email,
-          password: decoded.passwordHash,
+    if (!pendingUser) {
+      return res.status(400).json({ message: "Link expired or invalid" });
+    }
+
+    // 3️⃣ Check if already in User collection
+    const existingUser = await User.findOne({ email: decoded.email });
+    if (existingUser) {
+      // Already verified — clean up pendingUser if it exists
+      await PendingUser.deleteOne({ email: decoded.email });
+      return res.status(200).json({
+        message: "Email already verified",
+        user: {
+          id: existingUser._id,
+          fullName: existingUser.fullName,
+          email: existingUser.email,
+          roles: existingUser.roles,
+          verified: existingUser.verified,
         },
-      },
-      { upsert: true, new: true }
-    );
+      });
+    }
 
-    // Generate login JWT
-    const loginToken = jwt.sign({ id: result._id }, process.env.JWT_SECRET, {
+    // 4️⃣ Create user in User collection
+    const newUser = await User.create({
+      fullName: pendingUser.fullName,
+      email: pendingUser.email,
+      password: pendingUser.password,
+      verified: true,
+    });
+
+    // 5️⃣ Delete pending user
+    await PendingUser.deleteOne({ email: pendingUser.email });
+
+    // 6️⃣ Auto-login
+    const loginToken = jwt.sign({ id: newUser._id }, JWT_SECRET, {
       expiresIn: "1d",
     });
-
-    // Send JWT in HttpOnly cookie
     res.cookie("token", loginToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: process.env.NODE_ENV,
       sameSite: "strict",
-      maxAge: 1 * 24 * 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
     });
 
-    // Respond with success
     return res.status(200).json({
       message: "Email verified and logged in",
       user: {
-        id: result._id,
-        fullName: result.fullName,
-        email: result.email,
-        role: result.role,
-        verified: result.verified,
+        id: newUser._id,
+        fullName: newUser.fullName,
+        email: newUser.email,
+        roles: newUser.roles,
+        verified: newUser.verified,
       },
     });
   } catch (err) {
-    console.error("Verify error:", err);
+    console.error("Verify Email Error:", err);
     return res.status(400).json({ message: "Verification failed or expired" });
   }
 };
@@ -154,7 +200,7 @@ export const verifyEmail = async (req, res) => {
 export const logOut = (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: process.env.NODE_ENV,
     sameSite: "strict",
   });
   res.status(200).json({ message: "Logged out successfully" });
