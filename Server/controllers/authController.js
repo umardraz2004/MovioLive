@@ -135,7 +135,6 @@ export const verifyEmail = async (req, res) => {
     const pendingUser = await PendingUser.findOne({
       email: decoded.email,
       verificationToken: token,
-      expiresAt: { $gt: new Date() },
     });
 
     if (!pendingUser) {
@@ -159,16 +158,18 @@ export const verifyEmail = async (req, res) => {
       });
     }
 
-    // 4️⃣ Create user in User collection
-    const newUser = await User.create({
-      fullName: pendingUser.fullName,
-      email: pendingUser.email,
-      password: pendingUser.password,
-      verified: true,
-    });
+    const userData = pendingUser;
 
     // 5️⃣ Delete pending user
     await PendingUser.deleteOne({ email: pendingUser.email });
+
+    // 4️⃣ Create user in User collection
+    const newUser = await User.create({
+      fullName: userData.fullName,
+      email: userData.email,
+      password: userData.password,
+      verified: true,
+    });
 
     // 6️⃣ Auto-login
     const loginToken = jwt.sign({ id: newUser._id }, JWT_SECRET, {

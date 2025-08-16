@@ -18,6 +18,7 @@ const pendingUserSchema = new mongoose.Schema(
     },
     verificationToken: {
       type: String,
+      unique: true,
       required: true,
     },
     expiresAt: {

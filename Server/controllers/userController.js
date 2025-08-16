@@ -42,3 +42,32 @@ export const uploadAvatar = async (req, res) => {
     res.status(500).json({ message: "Avatar upload failed" });
   }
 };
+
+export const updateUserName = async (req, res) => {
+  const { userId } = req.params;
+  const { field } = req.params; // e.g. "fullName"
+  const { value } = req.body; // send as { value: "newName" }
+
+  try {
+    // ✅ whitelist fields for safety
+    const allowedFields = ["fullName", "role"];
+    if (!allowedFields.includes(field)) {
+      return res.status(400).json({ message: "Invalid field update" });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { [field]: value } // dynamic field update
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User updated", user: updatedUser });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Error updating user", error: err.message });
+  }
+};

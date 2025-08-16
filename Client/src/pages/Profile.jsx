@@ -13,6 +13,9 @@ import {
   FaSun,
   FaSignOutAlt,
 } from "react-icons/fa";
+import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const Profile = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -24,10 +27,21 @@ const Profile = () => {
     setFormData({ ...formData, [field]: value });
   };
 
-  const handleSave = () => {
-    // Save to backend later
-    setEditField(null);
+  const handleSave = async (field) => {
+    console.log(formData);
+    try {
+      const res = await axios.post(
+        `${baseUrl}/api/users/${user.id}/${field}`,
+        { value: formData[field] }, // ✅ only send updated field value
+        { withCredentials: true }
+      );
+
+      console.log(res.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
+  
   const avatarUrl = user?.avatar?.url;
   return (
     <div className="relative text-gray-900 dark:text-gray-100 mt-10 mb-16 px-5">
