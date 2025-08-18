@@ -16,7 +16,7 @@ const makeVerifyToken = ({ fullName, email, passwordHash }) => {
     passwordHash, // bcrypt hash only
   };
   return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: "10m", // short-lived
+    expiresIn: "30m", // short-lived
   });
 };
 

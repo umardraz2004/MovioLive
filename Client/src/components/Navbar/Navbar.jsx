@@ -6,14 +6,18 @@ import NavLogo from "../../assets/images/NavLogo.png";
 import NavMenu from "./NavMenu";
 import { useAuth } from "../../store/AuthContext";
 import UserAvatar from "./UserAvatar";
+import { useUser } from "../../hooks/useUser";
 
 const Navbar = () => {
-  const { isAuthenticated, user, logout } = useAuth();
-  const isLoggedIn = !!user;
+  const { isAuthenticated, logout } = useAuth();
+  const { user } = useUser();
+  // const isLoggedIn = !!user;
   const isOrganizer = user?.role === "organizer";
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
+
+  const avatarUrl = user?.avatar?.url;
 
   useEffect(() => {
     const handleScroll = () => setIsSticky(window.scrollY > 100);
@@ -50,11 +54,11 @@ const Navbar = () => {
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6 text-gray-700 dark:text-gray-200">
           <NavMenu
-            isLoggedIn={isLoggedIn}
+            isLoggedIn={isAuthenticated}
             isOrganizer={isOrganizer}
             handleLogout={logout}
           />
-          {isAuthenticated && isLoggedIn && (
+          {isAuthenticated && (
             <div className="flex items-center">
               <Link
                 to="/profile"
@@ -63,7 +67,7 @@ const Navbar = () => {
                 aria-label="User Profile"
                 draggable={false}
               >
-                <UserAvatar />
+                <UserAvatar avatar={avatarUrl} />
               </Link>
             </div>
           )}
@@ -114,10 +118,17 @@ const Navbar = () => {
                   closeMenu={closeMenu}
                 />
               </div>
+
+              {/* User Profile Section */}
               {isAuthenticated && isLoggedIn && (
                 <div className="flex items-center justify-between border-t-2 pt-5 border-gray-900 dark:border-white">
-                  <div className="font-semibold font-WorkSans text-red-600 dark:text-white">
-                    Your Profile
+                  <div className="flex flex-col">
+                    <span className="font-semibold font-WorkSans text-red-600 dark:text-white">
+                      {user?.fullName || "Your Profile"}
+                    </span>
+                    <span className="text-xs text-gray-600 dark:text-gray-300">
+                      Last active: {user?.lastActivity || "Just now"}
+                    </span>
                   </div>
                   <Link
                     to="/profile"

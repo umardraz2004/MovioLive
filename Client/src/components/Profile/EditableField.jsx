@@ -32,7 +32,7 @@ const EditableField = ({
         {editField === field ? (
           <>
             <button
-              onClick={() => handleSave(field)}
+              onClick={() => handleSave(field, value)}
               className="p-2 bg-green-600 hover:bg-green-700 rounded-md text-white"
             >
               <FaSave />

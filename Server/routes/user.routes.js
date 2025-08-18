@@ -6,6 +6,6 @@ const router = express.Router();
 
 // POST request to upload avatar (auth protected)
 router.post("/upload-avatar", verifyToken, uploadAvatar);
-router.post("/:userId/fullName", verifyToken, updateUserName);
+router.patch("/:userId/:field", verifyToken, updateUserName);
 
 export default router;

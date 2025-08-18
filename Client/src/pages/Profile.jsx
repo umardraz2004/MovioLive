@@ -1,10 +1,10 @@
 import RoleSelector from "../components/Profile/RoleSelector";
 import EditableField from "../components/Profile/EditableField";
 import QuickLinkCard from "../components/Profile/QuickLinkCard";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { ThemeContext } from "../store/ThemeContext";
 import ProfileImageUploader from "../components/Profile/ProfileImageUploader";
-import { useAuth } from "../store/AuthContext";
+import { useUser } from "../hooks/useUser";
 import {
   FaTicketAlt,
   FaCalendarAlt,
@@ -13,50 +13,62 @@ import {
   FaSun,
   FaSignOutAlt,
 } from "react-icons/fa";
-import axios from "axios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
+import { useAuth } from "../store/AuthContext";
 
 const Profile = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const { user, logout, updateAvatar } = useAuth();
+  const { user, updateAvatar, updateField, isLoading } = useUser();
+  const { logout } = useAuth();
   const [editField, setEditField] = useState(null);
-  const [formData, setFormData] = useState(user);
+  const [formData, setFormData] = useState(null);
+
+  // when user loads from hook, sync into local formData
+  useEffect(() => {
+    if (user) setFormData(user);
+  }, [user]);
 
   const handleChange = (field, value) => {
-    setFormData({ ...formData, [field]: value });
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSave = async (field) => {
-    console.log(formData);
+  const handleSave = async (field, value) => {
+    if (!formData) return;
     try {
-      const res = await axios.post(
-        `${baseUrl}/api/users/${user.id}/${field}`,
-        { value: formData[field] }, // ✅ only send updated field value
-        { withCredentials: true }
-      );
-
-      console.log(res.data);
-    } catch (error) {
-      console.error(error);
+      await updateField({field, value}); // ✅ from useUser hook
+      setEditField(null);
+    } catch (err) {
+      console.error("Failed to update field:", err);
     }
   };
-  
+
   const avatarUrl = user?.avatar?.url;
+
+  if (isLoading || !formData) {
+    return (
+      <div className="flex justify-center items-center h-[50vh]">
+        <p className="text-gray-600 dark:text-gray-300 animate-pulse">
+          Loading profile...
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="relative text-gray-900 dark:text-gray-100 mt-10 mb-16 px-5">
       <div className="max-w-4xl mx-auto space-y-8">
+        {/* ✅ Avatar uploader */}
         <ProfileImageUploader
-          currentAvatar={avatarUrl} // string only
+          currentAvatar={avatarUrl || ""}
           onAvatarChange={updateAvatar}
         />
 
         <div className="space-y-4">
-          {["fullName", "email", "password"].map((field) => (
+          {/* ✅ Editable fields (guarded against undefined) */}
+          {["fullName", "email"].map((field) => (
             <EditableField
               key={field}
               field={field}
-              value={formData[field]}
+              value={formData?.[field] || ""}
               editField={editField}
               setEditField={setEditField}
               handleChange={handleChange}
@@ -64,13 +76,27 @@ const Profile = () => {
             />
           ))}
 
-          <RoleSelector
-            roles={formData.roles}
+          {/* ✅ Password update only via EditableField */}
+          <EditableField
+            key="password"
+            field="password"
+            value="" // never prefill passwords
             editField={editField}
             setEditField={setEditField}
             handleChange={handleChange}
             handleSave={handleSave}
           />
+
+          {/* ✅ Roles selector */}
+          <RoleSelector
+            roles={formData.roles || []}
+            editField={editField}
+            setEditField={setEditField}
+            handleChange={handleChange}
+            handleSave={handleSave}
+          />
+
+          {/* ✅ Theme + Logout */}
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={toggleTheme}
@@ -90,6 +116,7 @@ const Profile = () => {
           </div>
         </div>
 
+        {/* ✅ Quick links */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
           <QuickLinkCard
             to="/error"
