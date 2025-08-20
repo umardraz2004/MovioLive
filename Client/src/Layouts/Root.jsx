@@ -1,16 +1,18 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { useAuth } from "../store/AuthContext";
+import { useContext } from "react";
+import { ThemeContext } from "../store/ThemeContext";
 import Navbar from "../components/Navbar/Navbar";
 import LoadingOverlay from "../components/LoadingOverlay";
 import FooterSection from "../components/Footer/FooterSection";
-import { useEffect } from "react";
 
 const Root = () => {
   const { loading } = useAuth();
+  const { theme } = useContext(ThemeContext);
   const location = useLocation();
   const hideLoadingOnVerify = location.pathname.startsWith("/verify-email");
- 
+
   return (
     <div className="flex flex-col">
       {!hideLoadingOnVerify && <LoadingOverlay loading={loading} />}
@@ -22,25 +24,29 @@ const Root = () => {
           toastOptions={{
             duration: 3000,
             style: {
-              background: "#0f172a",
-              color: "#f8fafc",
               fontWeight: 500,
               fontSize: "0.9rem",
               padding: "12px 16px",
               borderRadius: "0.75rem",
-              border: "1px solid #1e293b",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+              border:
+                theme === "dark" ? "1px solid #374151" : "1px solid #d1d5db",
+              boxShadow:
+                theme === "dark"
+                  ? "0 4px 12px rgba(0,0,0,0.5)"
+                  : "0 4px 12px rgba(0,0,0,0.15)",
+              background: theme === "dark" ? "#090909" : "#ffffff",
+              color: theme === "dark" ? "#f9fafb" : "#1f2937",
             },
             success: {
               iconTheme: {
                 primary: "#22c55e",
-                secondary: "#f8fafc",
+                secondary: theme === "dark" ? "#1f2937" : "#ffffff",
               },
             },
             error: {
               iconTheme: {
                 primary: "#ef4444",
-                secondary: "#f8fafc",
+                secondary: theme === "dark" ? "#1f2937" : "#ffffff",
               },
             },
           }}
