@@ -11,27 +11,26 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const makeVerifyToken = ({ fullName, email, passwordHash }) => {
   const payload = {
     purpose: "email-verify",
-    email: email.toLowerCase(),
+    email,
     fullName,
     passwordHash, // bcrypt hash only
   };
   return jwt.sign(payload, JWT_SECRET, {
-    expiresIn: "30m", // short-lived
+    expiresIn: "10m",
   });
 };
 
 export const signUp = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
-    const lowerEmail = email.toLowerCase();
 
     // Check if user exists
-    if (await User.findOne({ email: lowerEmail })) {
+    if (await User.findOne({ email: email })) {
       return res.status(400).json({ message: "User already exists" });
     }
 
     // Check pending user
-    const existingPending = await PendingUser.findOne({ email: lowerEmail });
+    const existingPending = await PendingUser.findOne({ email: email });
     if (existingPending) {
       if (existingPending.expiresAt > new Date()) {
         return res.status(400).json({
@@ -39,7 +38,7 @@ export const signUp = async (req, res) => {
             "A verification link was already sent. Please check your email.",
         });
       } else {
-        await PendingUser.deleteOne({ email: lowerEmail }); // remove expired
+        await PendingUser.deleteOne({ email: email }); // remove expired
       }
     }
 
@@ -50,20 +49,19 @@ export const signUp = async (req, res) => {
     // Create token & save pending user
     const verificationToken = makeVerifyToken({
       fullName,
-      email: lowerEmail,
+      email,
       passwordHash,
     });
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
     await PendingUser.create({
       fullName,
-      email: lowerEmail,
+      email,
       password: passwordHash,
       verificationToken,
-      expiresAt,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
     });
 
-    await sendVerificationEmail(lowerEmail, verificationToken);
+    await sendVerificationEmail(email, verificationToken);
 
     return res.status(200).json({
       message:
@@ -164,12 +162,22 @@ export const verifyEmail = async (req, res) => {
     await PendingUser.deleteOne({ email: pendingUser.email });
 
     // 4️⃣ Create user in User collection
-    const newUser = await User.create({
-      fullName: userData.fullName,
-      email: userData.email,
-      password: userData.password,
-      verified: true,
-    });
+    let newUser;
+    try {
+      newUser = await User.create({
+        fullName: userData.fullName,
+        email: userData.email,
+        password: userData.password,
+        verified: true,
+      });
+    } catch (error) {
+      if (error.code === 11000) {
+        // User already exists, just continue
+        newUser = await User.findOne({ email: userData.email });
+      } else {
+        throw error;
+      }
+    }
 
     // 6️⃣ Auto-login
     const loginToken = jwt.sign({ id: newUser._id }, JWT_SECRET, {

@@ -24,7 +24,6 @@ const pendingUserSchema = new mongoose.Schema(
     expiresAt: {
       type: Date, // ✅ type should be Date
       required: true,
-      default: () => new Date(Date.now() + 30 * 60 * 1000), // 10 minutes from now
     },
   },
   { timestamps: true }

@@ -5,20 +5,42 @@ import FormHeader from "../components/Form/FormHeader";
 import FormInput from "../components/Form/FormInput";
 import { contactSchema } from "../utils/schema";
 import FormSubmittingBtn from "../components/Form/FormSubmittingBtn";
+import { showToast } from "../utils/toast";
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const Contact = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: yupResolver(contactSchema),
   });
 
   const onSubmit = async (data) => {
-    console.log("Form data:", data);
-    await new Promise((resolve) => setTimeout(resolve, 2000)); // simulating API call
-    console.log("Done!");
+    try {
+      const response = await fetch(`${baseUrl}/api/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        showToast(result.message, "success");
+        reset(); // Clear the form
+      } else {
+        showToast(result.message || "Failed to send message", "error");
+      }
+    } catch (error) {
+      console.error("Contact form error:", error);
+      showToast("Failed to send message. Please try again.", "error");
+    }
   };
 
   return (
