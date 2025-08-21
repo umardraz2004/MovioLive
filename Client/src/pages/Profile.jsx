@@ -34,7 +34,7 @@ const Profile = () => {
   const handleSave = async (field, value) => {
     if (!formData) return;
     try {
-      await updateField({field, value}); // ✅ from useUser hook
+      await updateField({ field, value }); // ✅ from useUser hook
       setEditField(null);
     } catch (err) {
       console.error("Failed to update field:", err);
@@ -45,7 +45,7 @@ const Profile = () => {
 
   if (isLoading || !formData) {
     return (
-      <div className="flex justify-center items-center h-[50vh]">
+      <div className="flex justify-center items-center min-h-[calc(100vh-4.8rem)]">
         <p className="text-gray-600 dark:text-gray-300 animate-pulse">
           Loading profile...
         </p>

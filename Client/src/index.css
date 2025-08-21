@@ -1,5 +1,23 @@
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* Prevent dark mode flicker */
+html {
+    color-scheme: light dark;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+html[data-theme="light"] {
+    color-scheme: light;
+}
+
+/* Prevent layout shift during scroll */
+body {
+    overflow-x: hidden;
+}
+
 /* Load fonts */
 @font-face {
     font-family: "Lobster";
@@ -106,4 +124,22 @@
     /* amber-400 */
     color: white;
     /* slate-800 */
+}
+
+/* Remove autofill styling */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #f9fafb inset !important;
+    -webkit-text-fill-color: #111827 !important;
+}
+
+/* Dark mode autofill */
+[data-theme="dark"] input:-webkit-autofill,
+[data-theme="dark"] input:-webkit-autofill:hover,
+[data-theme="dark"] input:-webkit-autofill:focus,
+[data-theme="dark"] input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #000000 inset !important;
+    -webkit-text-fill-color: #ffffff !important;
 }

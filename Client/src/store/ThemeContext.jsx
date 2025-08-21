@@ -6,16 +6,31 @@ export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
     // ✅ Run only once on initial load
     const storedTheme = localStorage.getItem("theme");
-    if (storedTheme) return storedTheme;
+    if (storedTheme) {
+      // Apply theme immediately to prevent flicker
+      document.documentElement.setAttribute("data-theme", storedTheme);
+      document.documentElement.classList.toggle("dark", storedTheme === "dark");
+      return storedTheme;
+    }
 
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    return prefersDark ? "dark" : "light";
+    const initialTheme = prefersDark ? "dark" : "light";
+    // Apply theme immediately to prevent flicker
+    document.documentElement.setAttribute("data-theme", initialTheme);
+    document.documentElement.classList.toggle("dark", initialTheme === "dark");
+    return initialTheme;
   });
 
-  // ✅ Apply theme immediately on mount
+  // ✅ Apply theme immediately on mount and changes
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
+    document.documentElement.classList.toggle("dark", theme === "dark");
     localStorage.setItem("theme", theme);
+    
+    // Force a repaint to prevent flicker
+    document.documentElement.style.display = 'none';
+    document.documentElement.offsetHeight; // Trigger reflow
+    document.documentElement.style.display = '';
   }, [theme]);
 
   const toggleTheme = () => {

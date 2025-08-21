@@ -59,16 +59,26 @@ const Navbar = () => {
             handleLogout={logout}
           />
           {isAuthenticated && (
-            <div className="flex items-center">
-              <Link
-                to="/profile"
-                onClick={closeMenu}
-                className="rounded-full border-2 border-red-500 outline-0"
-                aria-label="User Profile"
-                draggable={false}
-              >
-                <UserAvatar avatar={avatarUrl} />
-              </Link>
+            <div className="flex">
+              <div className="flex items-center me-5">
+                <Link
+                  to={"/prices"}
+                  className="relative bg-red-500 hover:bg-red-600 text-white py-2 px-5 rounded-lg font-medium text-sm transition-all duration-200 ease-out hover:shadow-lg hover:-translate-y-0.5 focus:outline-none group"
+                >
+                  Become an Organizer
+                </Link>
+              </div>
+              <div className="flex items-center">
+                <Link
+                  to="/profile"
+                  onClick={closeMenu}
+                  className="rounded-full border-2 border-red-500 outline-0"
+                  aria-label="User Profile"
+                  draggable={false}
+                >
+                  <UserAvatar avatar={avatarUrl} />
+                </Link>
+              </div>
             </div>
           )}
         </div>

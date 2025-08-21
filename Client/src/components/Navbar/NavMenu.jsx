@@ -1,5 +1,4 @@
 import NavLink from "./NavLink";
-import HoverUnderlineButton from "../HoverUnderLineButton";
 
 const NavMenu = ({ isLoggedIn, isOrganizer, handleLogout, closeMenu }) => {
   return (
@@ -15,9 +14,9 @@ const NavMenu = ({ isLoggedIn, isOrganizer, handleLogout, closeMenu }) => {
       {isLoggedIn && isOrganizer && (
         <NavLink to="/organizer" label="Dashboard" OnNavBtnClick={closeMenu} />
       )}
-      {isLoggedIn && (
+      {/* {isLoggedIn && (
         <HoverUnderlineButton onClick={handleLogout} label="Logout" />
-      )}
+      )} */}
     </>
   );
 };

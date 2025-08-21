@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Root from "./Layouts/Root";
 import Error from "./pages/Error";
 import Login from "./pages/Login";
+import Prices from "./pages/Prices";
 import Signup from "./pages/Signup";
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
@@ -23,12 +24,19 @@ const router = createBrowserRouter([
         path: "/profile",
         element: (
           <PrivateRoute>
-            {" "}
             <Profile />
           </PrivateRoute>
         ),
       },
       { path: "/verify-email", element: <VerifyEmail /> },
+      {
+        path: "/prices",
+        element: (
+          <PrivateRoute>
+            <Prices />
+          </PrivateRoute>
+        ),
+      },
     ],
   },
 ]);

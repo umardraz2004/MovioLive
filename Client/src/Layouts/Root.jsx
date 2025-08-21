@@ -1,9 +1,10 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { useContext } from "react";
 import { Toaster } from "react-hot-toast";
 import { useAuth } from "../store/AuthContext";
-import { useContext } from "react";
-import { ThemeContext } from "../store/ThemeContext";
 import Navbar from "../components/Navbar/Navbar";
+import ScrollToTop from "../components/ScrollToTop";
+import { ThemeContext } from "../store/ThemeContext";
+import { Outlet, useLocation } from "react-router-dom";
 import LoadingOverlay from "../components/LoadingOverlay";
 import FooterSection from "../components/Footer/FooterSection";
 
@@ -15,6 +16,7 @@ const Root = () => {
 
   return (
     <div className="flex flex-col">
+      <ScrollToTop />
       {!hideLoadingOnVerify && <LoadingOverlay loading={loading} />}
       <Navbar />
       <main className="flex-1 bg-gray-100 dark:bg-[#090909]">
