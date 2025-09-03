@@ -8,12 +8,10 @@ dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const makeVerifyToken = ({ fullName, email, passwordHash }) => {
+const makeVerifyToken = ({ email, purpose }) => {
   const payload = {
-    purpose: "email-verify",
+    purpose,
     email,
-    fullName,
-    passwordHash, // bcrypt hash only
   };
   return jwt.sign(payload, JWT_SECRET, {
     expiresIn: "10m",
@@ -24,13 +22,13 @@ export const signUp = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
 
-    // Check if user exists
-    if (await User.findOne({ email: email })) {
+    // 1️⃣ Check if user already exists
+    if (await User.findOne({ email })) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Check pending user
-    const existingPending = await PendingUser.findOne({ email: email });
+    // 2️⃣ Check for existing pending user
+    const existingPending = await PendingUser.findOne({ email });
     if (existingPending) {
       if (existingPending.expiresAt > new Date()) {
         return res.status(400).json({
@@ -38,37 +36,46 @@ export const signUp = async (req, res) => {
             "A verification link was already sent. Please check your email.",
         });
       } else {
-        await PendingUser.deleteOne({ email: email }); // remove expired
+        await PendingUser.deleteOne({ email }); // cleanup expired
       }
     }
 
-    // Hash password
+    // 3️⃣ Hash password
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Create token & save pending user
+    // 4️⃣ Create verification token (DO NOT put password inside)
     const verificationToken = makeVerifyToken({
-      fullName,
       email,
-      passwordHash,
+      purpose: "email-verify",
     });
 
-    await PendingUser.create({
+    // 5️⃣ Save pending user
+    const pendingUser = await PendingUser.create({
       fullName,
       email,
       password: passwordHash,
       verificationToken,
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 mins
     });
 
-    await sendVerificationEmail(email, verificationToken);
+    // 6️⃣ Send email
+    try {
+      await sendVerificationEmail(email, verificationToken);
+    } catch (err) {
+      console.error("Email sending failed:", err);
+      await PendingUser.deleteOne({ _id: pendingUser._id }); // rollback
+      return res
+        .status(500)
+        .json({ message: "Failed to send email. Try again." });
+    }
 
     return res.status(200).json({
       message:
         "Check your email to verify your account. The link expires in 10 minutes.",
     });
   } catch (err) {
-    console.error(err);
+    console.error("SignUp Error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -123,7 +130,7 @@ export const verifyEmail = async (req, res) => {
   const { token } = req.body;
 
   try {
-    // 1️⃣ Verify JWT first (fail fast)
+    // 1️⃣ Verify JWT
     const decoded = jwt.verify(token, JWT_SECRET);
     if (decoded.purpose !== "email-verify") {
       return res.status(400).json({ message: "Invalid verification token" });
@@ -134,15 +141,16 @@ export const verifyEmail = async (req, res) => {
       email: decoded.email,
       verificationToken: token,
     });
-
     if (!pendingUser) {
-      return res.status(400).json({ message: "Link expired or invalid" });
+      console.log("❌ No pending user found, stopping here");
+      return res.status(400).json({ message: "No user to validate" });
     }
 
-    // 3️⃣ Check if already in User collection
-    const existingUser = await User.findOne({ email: decoded.email });
+    console.log("✅ Pending user found:", pendingUser.email);
+
+    // 3️⃣ Already verified?
+    let existingUser = await User.findOne({ email: decoded.email });
     if (existingUser) {
-      // Already verified — clean up pendingUser if it exists
       await PendingUser.deleteOne({ email: decoded.email });
       return res.status(200).json({
         message: "Email already verified",
@@ -156,36 +164,38 @@ export const verifyEmail = async (req, res) => {
       });
     }
 
-    const userData = pendingUser;
-
-    // 5️⃣ Delete pending user
-    await PendingUser.deleteOne({ email: pendingUser.email });
-
-    // 4️⃣ Create user in User collection
+    // 4️⃣ Create user from pending
     let newUser;
     try {
       newUser = await User.create({
-        fullName: userData.fullName,
-        email: userData.email,
-        password: userData.password,
+        fullName: pendingUser.fullName,
+        email: pendingUser.email,
+        password: pendingUser.password,
         verified: true,
       });
     } catch (error) {
       if (error.code === 11000) {
-        // User already exists, just continue
-        newUser = await User.findOne({ email: userData.email });
+        // Ensure verified flag is set if duplicate
+        newUser = await User.findOneAndUpdate(
+          { email: pendingUser.email },
+          { verified: true },
+          { new: true }
+        );
       } else {
         throw error;
       }
     }
 
-    // 6️⃣ Auto-login
+    // 5️⃣ Delete pending user after success
+    await PendingUser.deleteOne({ email: pendingUser.email });
+
+    // 6️⃣ Auto-login (set cookie)
     const loginToken = jwt.sign({ id: newUser._id }, JWT_SECRET, {
       expiresIn: "1d",
     });
     res.cookie("token", loginToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV,
+      secure: process.env.NODE_ENV === "production", // ✅ FIXED
       sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000,
     });

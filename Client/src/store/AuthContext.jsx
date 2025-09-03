@@ -9,6 +9,7 @@ import {
   useCallback,
 } from "react";
 import axios from "axios";
+import { showToast } from "../utils/toast.js";
 
 const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes
 
@@ -25,7 +26,7 @@ function authReducer(state, action) {
     case "LOGIN":
       return { ...state, isAuthenticated: true };
     case "LOGOUT":
-      return { ...state, isAuthenticated: false };
+      return { ...state, isAuthenticated: false, };
     case "SET_AUTH":
       return { ...state, isAuthenticated: action.payload };
     default:
@@ -57,6 +58,7 @@ export function AuthProvider({ children }) {
         if (inactivityTimerRef.current)
           clearTimeout(inactivityTimerRef.current);
         dispatch({ type: "LOGOUT" });
+        showToast("Logged out successfully", "success");
       });
   }, [API]);
 

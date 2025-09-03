@@ -5,17 +5,18 @@ export const getPricingPlans = (billingType) => [
     price: billingType === "monthly" ? 15 : 150,
     originalPrice: billingType === "monthly" ? null : 180,
     period: billingType === "monthly" ? "/month" : "/year",
+    priceId: billingType === "monthly" ? "price_1S2dlJ1AUEKkCmZd5zTYWuue" : "price_1S2doR1AUEKkCmZdHVpDu9mb", // Replace with your actual Stripe Price IDs
     features: [
       "Up to 10 events per month",
-      "Basic customization tools", 
+      "Basic customization tools",
       "Email support",
       "Basic analytics",
-      "Mobile app access"
+      "Mobile app access",
     ],
     buttonText: "Start Basic Plan",
     popular: false,
     color: "blue",
-    gradient: "from-blue-500 to-cyan-600"
+    gradient: "from-blue-500 to-cyan-600",
   },
   {
     name: "Standard",
@@ -23,18 +24,19 @@ export const getPricingPlans = (billingType) => [
     price: billingType === "monthly" ? 39 : 390,
     originalPrice: billingType === "monthly" ? null : 468,
     period: billingType === "monthly" ? "/month" : "/year",
+    priceId: billingType === "monthly" ? "price_1S2dol1AUEKkCmZdyHRgrX9X" : "price_1S2dq71AUEKkCmZdzeljC7cY", // Replace with your actual Stripe Price IDs
     features: [
       "Unlimited events creation",
       "Advanced customization",
-      "Priority support", 
+      "Priority support",
       "Advanced analytics",
       "Team collaboration (5 members)",
-      "Payment processing"
+      "Payment processing",
     ],
     buttonText: "Start Free Trial",
     popular: true,
     color: "red",
-    gradient: "from-red-500 to-pink-600"
+    gradient: "from-red-500 to-pink-600",
   },
   {
     name: "Premium",
@@ -42,19 +44,20 @@ export const getPricingPlans = (billingType) => [
     price: billingType === "monthly" ? 99 : 990,
     originalPrice: billingType === "monthly" ? null : 1188,
     period: billingType === "monthly" ? "/month" : "/year",
+    priceId: billingType === "monthly" ? "price_1S2dxj1AUEKkCmZdFp2YPrXc" : "price_1S2dyB1AUEKkCmZdbFV3eu2Z", // Replace with your actual Stripe Price IDs
     features: [
       "Everything in Standard",
       "White-label solution",
       "API access",
       "Dedicated account manager",
       "Custom integrations",
-      "Priority phone support"
+      "Priority phone support",
     ],
     buttonText: "Contact Sales Team",
     popular: false,
     color: "purple",
-    gradient: "from-purple-500 to-indigo-600"
-  }
+    gradient: "from-purple-500 to-indigo-600",
+  },
 ];
 
 export const specialPlans = [
@@ -66,28 +69,28 @@ export const specialPlans = [
     duration: "14 days",
     features: [
       "Create up to 3 test events",
-      "Access to all premium features", 
-      "No credit card required"
+      "Access to all premium features",
+      "No credit card required",
     ],
     buttonText: "Start Free Trial",
     iconName: "FiZap",
     color: "green",
-    gradient: "from-green-500 to-emerald-600"
+    gradient: "from-green-500 to-emerald-600",
   },
   {
     name: "One-Day Event",
     description: "Perfect for single events",
-    price: 29,
+    price: 5,
     period: "One-time",
     duration: "24 hours",
     features: [
       "Full platform access",
       "Create one professional event",
-      "All premium features included"
+      "All premium features included",
     ],
     buttonText: "Buy One-Day Pass",
-    iconName: "FiClock", 
+    iconName: "FiClock",
     color: "orange",
-    gradient: "from-orange-500 to-red-600"
-  }
+    gradient: "from-orange-500 to-red-600",
+  },
 ];

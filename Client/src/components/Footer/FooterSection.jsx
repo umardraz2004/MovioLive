@@ -4,7 +4,7 @@ import NavLogo from "../../assets/images/NavLogo.png"
 
 const FooterSection = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300 relative overflow-hidden">
+    <footer className="bg-gradient-to-r from-gray-200 to-gray-300 dark:from-[#050505] dark:to-[#0b0b0b] text-gray-300 relative overflow-hidden">
       {/* Gradient top border */}
       <div className="absolute top-0 left-0 w-full h-[5px] bg-[linear-gradient(to_right,_#3b82f6,_#a855f7,_#ef4444,_#3b82f6)] animate-gradient-move"></div>
 
@@ -14,8 +14,8 @@ const FooterSection = () => {
           <div className="inline-flex items-center gap-2">
             <img src={NavLogo} alt="nav logo" className="w-12" />
             <div>
-              <div className="font-bold text-white text-lg">MovioLive</div>
-              <div className="text-sm text-gray-400">
+              <div className="font-bold text-red-600 text-lg">MovioLive</div>
+              <div className="text-sm dark:text-white text-gray-900 font-semibold">
                 Live cinema experiences, simplified.
               </div>
             </div>
@@ -33,7 +33,7 @@ const FooterSection = () => {
       </div>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800 py-6 text-center text-sm text-gray-500">
+      <div className="border-t border-gray-800 py-6 text-center text-sm text-gray-900 dark:text-white">
         © {new Date().getFullYear()} MovioLive. All rights reserved.
       </div>
     </footer>

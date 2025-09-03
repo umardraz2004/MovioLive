@@ -8,9 +8,11 @@ import FormFooterLink from "../components/Form/FormFooterLink";
 import FormSubmittingBtn from "../components/Form/FormSubmittingBtn";
 import axios from "axios";
 import { showToast } from "../utils/toast";
+import { useNavigate } from "react-router-dom";
 const baseURL = import.meta.env.VITE_API_BASE_URL;
 
 const Signup = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -27,6 +29,7 @@ const Signup = () => {
       if (res.status == 200) showToast(res.data.message, "success");
     } catch (err) {
       if (err.response.status == 400)
+        navigate("/login");
         showToast(err.response.data.message, "error");
     }
   };

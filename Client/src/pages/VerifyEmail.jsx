@@ -20,8 +20,12 @@ export default function VerifyEmail() {
     }
 
     let cancelled = false;
+    let hasRun = false; // 👈 guard against duplicate calls
 
-    (async () => {
+    const verify = async () => {
+      if (hasRun) return;
+      hasRun = true;
+
       try {
         const res = await axios.post(
           `${BASEURL}/api/auth/verify-email`,
@@ -44,7 +48,9 @@ export default function VerifyEmail() {
           "❌ Verification failed or the link has expired.";
         setStatus(msg);
       }
-    })();
+    };
+
+    verify();
 
     return () => {
       cancelled = true;

@@ -1,8 +1,47 @@
 import { motion } from "framer-motion";
 import { FiCheck, FiStar } from "react-icons/fi";
+import { useState } from "react";
+import { showToast } from "../../utils/toast";
 
-const PricingCard = ({ plan }) => {
+const PricingCard = ({ plan, billingType }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const isPopular = plan.popular;
+
+  const handleCheckout = async () => {
+    setIsLoading(true);
+    
+    try {
+      if (!plan.priceId) {
+        throw new Error('Price ID not found for this plan');
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/checkout/create-checkout-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          priceId: plan.priceId,
+          planType: 'subscription'
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else {
+        showToast(data.error || 'Failed to create checkout session', 'error');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      showToast('Error processing checkout. Please try again.', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   return (
     <div
@@ -79,13 +118,15 @@ const PricingCard = ({ plan }) => {
 
         {/* CTA Button */}
         <button
-          className={`w-full py-4 px-8 rounded-xl font-bold text-lg transition-all duration-200 ${
+          onClick={handleCheckout}
+          disabled={isLoading}
+          className={`w-full py-4 px-8 rounded-xl font-bold text-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
             isPopular
               ? 'bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg'
               : 'bg-gray-200 hover:bg-gray-300 dark:bg-red-500 dark:hover:bg-red-400 text-gray-900 dark:text-white'
           }`}
         >
-          {plan.buttonText}
+          {isLoading ? 'Processing...' : plan.buttonText}
         </button>
 
         {/* Guarantee Badge */}

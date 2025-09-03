@@ -95,16 +95,9 @@ html[data-theme="dark"] .feature-glass {
 }
 
 /* ---------- Footer small touches ---------- */
-footer {
-  background: linear-gradient(180deg, #050505, #0b0b0b);
-}
 
 footer a {
   transition: color .18s ease;
-}
-
-footer a:hover {
-  color: #fff;
 }
 
 /* ---------- Responsive tweaks ---------- */

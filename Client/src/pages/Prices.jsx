@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { useState } from "react";
 import PricingHeader from "../components/Pricing/PricingHeader";
@@ -17,17 +16,10 @@ const Prices = () => {
     <div className="py-12 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-        >
-          <PricingHeader 
-            billingType={billingType} 
-            setBillingType={setBillingType} 
-          />
-        </motion.div>
+        <PricingHeader
+          billingType={billingType}
+          setBillingType={setBillingType}
+        />
 
         {/* Main Pricing Plans */}
         <motion.div
@@ -45,9 +37,7 @@ const Prices = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
             >
-              <PricingCard 
-                plan={plan} 
-              />
+              <PricingCard plan={plan} billingType={billingType} />
             </motion.div>
           ))}
         </motion.div>
@@ -59,9 +49,7 @@ const Prices = () => {
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
         >
-          <SpecialOffersSection 
-            specialPlans={specialPlans}
-          />
+          <SpecialOffersSection specialPlans={specialPlans} />
         </motion.div>
 
         {/* Footer Section */}

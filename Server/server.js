@@ -6,9 +6,13 @@ import cookieParser from "cookie-parser";
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import checkoutRoutes from "./routes/checkoutRoutes.js";
 dotenv.config();
 
 const app = express();
+
+// Raw body parser for Stripe webhook (must be before express.json())
+app.use("/api/checkout/webhook", express.raw({ type: "application/json" }));
 
 app.use(express.json({ limit: "3mb" }));
 app.use(express.urlencoded({ extended: true, limit: "3mb" }));
@@ -22,7 +26,6 @@ app.use(
     credentials: true, // ✅ allow cookies
   })
 );
-app.use(express.json());
 app.use(cookieParser());
 
 // ✅ Test route
@@ -32,10 +35,9 @@ app.get("/", (req, res) => {
 
 //routes
 app.use("/api/auth", authRoutes);
-
 app.use("/api/users", userRoutes);
-
 app.use("/api/contact", contactRoutes);
+app.use("/api/checkout", checkoutRoutes);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port ${process.env.PORT || 5000}`);
