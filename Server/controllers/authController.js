@@ -136,38 +136,47 @@ export const verifyEmail = async (req, res) => {
       return res.status(400).json({ message: "Invalid verification token" });
     }
 
-    // 2️⃣ Find pending user
-    const pendingUser = await PendingUser.findOne({
-      email: decoded.email,
-      verificationToken: token,
-    });
-    if (!pendingUser) {
-      console.log("❌ No pending user found, stopping here");
-      return res.status(400).json({ message: "No user to validate" });
-    }
-
-    console.log("✅ Pending user found:", pendingUser.email);
-
-    // 3️⃣ Already verified?
-    let existingUser = await User.findOne({ email: decoded.email });
-    if (existingUser) {
+    // 2️⃣ Check if user already exists
+    let user = await User.findOne({ email: decoded.email });
+    if (user) {
+      if (!user.verified) {
+        user.verified = true;
+        await user.save();
+      }
+      // delete any leftover pending doc
       await PendingUser.deleteOne({ email: decoded.email });
+
       return res.status(200).json({
         message: "Email already verified",
         user: {
-          id: existingUser._id,
-          fullName: existingUser.fullName,
-          email: existingUser.email,
-          roles: existingUser.roles,
-          verified: existingUser.verified,
+          id: user._id,
+          fullName: user.fullName,
+          email: user.email,
+          roles: user.roles,
+          verified: user.verified,
         },
       });
     }
 
-    // 4️⃣ Create user from pending
-    let newUser;
+    // 3️⃣ Otherwise, check pending user
+    const pendingUser = await PendingUser.findOne({
+      email: decoded.email,
+      verificationToken: token,
+      expiresAt: { $gt: new Date() }, // ensure not expired
+    });
+
+    if (!pendingUser) {
+      console.log("❌ No pending user found (maybe already verified)");
+      return res
+        .status(400)
+        .json({ message: "Verification link expired or invalid" });
+    }
+
+    console.log("✅ Pending user found:", pendingUser.email);
+
+    // 4️⃣ Create real user
     try {
-      newUser = await User.create({
+      user = await User.create({
         fullName: pendingUser.fullName,
         email: pendingUser.email,
         password: pendingUser.password,
@@ -175,8 +184,8 @@ export const verifyEmail = async (req, res) => {
       });
     } catch (error) {
       if (error.code === 11000) {
-        // Ensure verified flag is set if duplicate
-        newUser = await User.findOneAndUpdate(
+        // If race condition → fetch existing
+        user = await User.findOneAndUpdate(
           { email: pendingUser.email },
           { verified: true },
           { new: true }
@@ -186,16 +195,16 @@ export const verifyEmail = async (req, res) => {
       }
     }
 
-    // 5️⃣ Delete pending user after success
+    // 5️⃣ Delete pending user
     await PendingUser.deleteOne({ email: pendingUser.email });
 
     // 6️⃣ Auto-login (set cookie)
-    const loginToken = jwt.sign({ id: newUser._id }, JWT_SECRET, {
+    const loginToken = jwt.sign({ id: user._id }, JWT_SECRET, {
       expiresIn: "1d",
     });
     res.cookie("token", loginToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // ✅ FIXED
+      secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000,
     });
@@ -203,11 +212,11 @@ export const verifyEmail = async (req, res) => {
     return res.status(200).json({
       message: "Email verified and logged in",
       user: {
-        id: newUser._id,
-        fullName: newUser.fullName,
-        email: newUser.email,
-        roles: newUser.roles,
-        verified: newUser.verified,
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        roles: user.roles,
+        verified: user.verified,
       },
     });
   } catch (err) {

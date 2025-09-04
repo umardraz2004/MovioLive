@@ -20,12 +20,8 @@ export default function VerifyEmail() {
     }
 
     let cancelled = false;
-    let hasRun = false; // 👈 guard against duplicate calls
 
     const verify = async () => {
-      if (hasRun) return;
-      hasRun = true;
-
       try {
         const res = await axios.post(
           `${BASEURL}/api/auth/verify-email`,
@@ -40,7 +36,17 @@ export default function VerifyEmail() {
         }
 
         setStatus("✅ Email verified successfully! Redirecting...");
-        setTimeout(() => navigate("/"), 2000);
+
+        setTimeout(() => {
+          if (window.opener) {
+            // Refresh parent and close popup
+            window.opener.location.reload();
+            window.close();
+          } else {
+            // Normal flow (if opened directly)
+            navigate("/");
+          }
+        }, 1500);
       } catch (e) {
         if (cancelled) return;
         const msg =
