@@ -79,20 +79,20 @@ const PaymentSuccess = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-red-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden"
+          className="bg-white dark:bg-black rounded-2xl shadow-xl overflow-hidden"
         >
           {/* Success Header */}
           <div className="bg-gradient-to-r from-green-500 to-green-600 px-8 py-12 text-center">
@@ -134,7 +134,7 @@ const PaymentSuccess = () => {
                 className="space-y-6"
               >
                 {/* Order Summary */}
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+                <div className="bg-gray-50 dark:bg-[#101010] rounded-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                     Order Summary
                   </h3>
@@ -213,7 +213,7 @@ const PaymentSuccess = () => {
               className="flex flex-col sm:flex-row gap-4 mt-8"
             >
               <Link
-                to="/dashboard"
+                to="/"
                 className="flex-1 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200 flex items-center justify-center"
               >
                 Go to Dashboard
@@ -222,7 +222,7 @@ const PaymentSuccess = () => {
 
               <Link
                 to="/"
-                className="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-900 dark:text-white font-semibold py-3 px-6 rounded-lg transition duration-200 text-center"
+                className="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-[#181818] dark:hover:bg-[#181818bc] text-gray-900 dark:text-white font-semibold py-3 px-6 rounded-lg transition duration-200 text-center"
               >
                 Back to Home
               </Link>
@@ -233,7 +233,7 @@ const PaymentSuccess = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.7, duration: 0.5 }}
-              className="mt-8 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg text-center"
+              className="mt-8 p-4 bg-gray-100 dark:bg-[#181818bc] rounded-lg text-center"
             >
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Having issues? Contact our support team at{" "}

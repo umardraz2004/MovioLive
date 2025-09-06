@@ -5,7 +5,10 @@ export const getPricingPlans = (billingType) => [
     price: billingType === "monthly" ? 15 : 150,
     originalPrice: billingType === "monthly" ? null : 180,
     period: billingType === "monthly" ? "/month" : "/year",
-    priceId: billingType === "monthly" ? "price_1S2dlJ1AUEKkCmZd5zTYWuue" : "price_1S2doR1AUEKkCmZdHVpDu9mb", // Replace with your actual Stripe Price IDs
+    priceId:
+      billingType === "monthly"
+        ? "price_1S2dlJ1AUEKkCmZd5zTYWuue"
+        : "price_1S2doR1AUEKkCmZdHVpDu9mb", // Replace with your actual Stripe Price IDs
     features: [
       "Up to 10 events per month",
       "Basic customization tools",
@@ -24,7 +27,10 @@ export const getPricingPlans = (billingType) => [
     price: billingType === "monthly" ? 39 : 390,
     originalPrice: billingType === "monthly" ? null : 468,
     period: billingType === "monthly" ? "/month" : "/year",
-    priceId: billingType === "monthly" ? "price_1S2dol1AUEKkCmZdyHRgrX9X" : "price_1S2dq71AUEKkCmZdzeljC7cY", // Replace with your actual Stripe Price IDs
+    priceId:
+      billingType === "monthly"
+        ? "price_1S2dol1AUEKkCmZdyHRgrX9X"
+        : "price_1S2dq71AUEKkCmZdzeljC7cY", // Replace with your actual Stripe Price IDs
     features: [
       "Unlimited events creation",
       "Advanced customization",
@@ -44,7 +50,10 @@ export const getPricingPlans = (billingType) => [
     price: billingType === "monthly" ? 99 : 990,
     originalPrice: billingType === "monthly" ? null : 1188,
     period: billingType === "monthly" ? "/month" : "/year",
-    priceId: billingType === "monthly" ? "price_1S2dxj1AUEKkCmZdFp2YPrXc" : "price_1S2dyB1AUEKkCmZdbFV3eu2Z", // Replace with your actual Stripe Price IDs
+    priceId:
+      billingType === "monthly"
+        ? "price_1S2dxj1AUEKkCmZdFp2YPrXc"
+        : "price_1S2dyB1AUEKkCmZdbFV3eu2Z", // Replace with your actual Stripe Price IDs
     features: [
       "Everything in Standard",
       "White-label solution",

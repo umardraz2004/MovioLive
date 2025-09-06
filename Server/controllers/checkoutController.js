@@ -118,14 +118,17 @@ export const handleWebhook = async (req, res) => {
 const handleCheckoutCompleted = async (session) => {
   const userId = session.metadata.userId;
   const planType = session.metadata.planType;
+  console.log(planType);
 
   try {
     if (planType === 'subscription') {
-      // Handle subscription creation
+      // Handle subscription creation - don't set period dates here
+      // They will be set by handleSubscriptionCreated event
       await User.findByIdAndUpdate(userId, {
         subscriptionStatus: 'active',
         subscriptionId: session.subscription,
-        planType: planType
+        planType: planType,
+        hasActivePass: true
       });
     } else if (planType === 'one-time') {
       // Handle one-time payment
@@ -145,17 +148,37 @@ const handleSubscriptionCreated = async (subscription) => {
     const customerId = subscription.customer;
     const user = await User.findOne({ stripeCustomerId: customerId });
     
+    // LOG THE ENTIRE SUBSCRIPTION OBJECT TO SEE WHAT STRIPE IS SENDING
+    console.log('=== FULL SUBSCRIPTION OBJECT ===');
+    console.log(JSON.stringify(subscription, null, 2));
+    console.log('current_period_start:', subscription.current_period_start);
+    console.log('current_period_end:', subscription.current_period_end);
+    console.log('=== END SUBSCRIPTION OBJECT ===');
+    
     if (user) {
-      // Safely convert Unix timestamps to dates
-      const periodStart = subscription.current_period_start ? new Date(subscription.current_period_start * 1000) : null;
-      const periodEnd = subscription.current_period_end ? new Date(subscription.current_period_end * 1000) : null;
+      // Get period dates from subscription items (they're nested there, not on main object!)
+      let periodStart = null;
+      let periodEnd = null;
       
-      // Validate dates before saving
+      if (subscription.items && subscription.items.data && subscription.items.data.length > 0) {
+        const firstItem = subscription.items.data[0];
+        periodStart = firstItem.current_period_start ? new Date(firstItem.current_period_start * 1000) : null;
+        periodEnd = firstItem.current_period_end ? new Date(firstItem.current_period_end * 1000) : null;
+      }
+      
+      console.log('Converted dates from subscription items:');
+      console.log('periodStart:', periodStart);
+      console.log('periodEnd:', periodEnd);
+      
+      // Set ALL subscription fields
       const updateData = {
         subscriptionId: subscription.id,
         subscriptionStatus: subscription.status,
+        hasActivePass: true,
+        planType: 'subscription' // or extract from subscription metadata if available
       };
       
+      // Only set dates if they are valid
       if (periodStart && !isNaN(periodStart.getTime())) {
         updateData.currentPeriodStart = periodStart;
       }
@@ -165,7 +188,9 @@ const handleSubscriptionCreated = async (subscription) => {
       }
       
       await User.findByIdAndUpdate(user._id, updateData);
-      console.log('Subscription created successfully for user:', user._id);
+      console.log('Subscription created successfully for user:', user._id, 'with data:', updateData);
+    } else {
+      console.warn('User not found for Stripe customer:', customerId);
     }
   } catch (error) {
     console.error('Error handling subscription creation:', error);
@@ -176,12 +201,47 @@ const handleSubscriptionUpdated = async (subscription) => {
   try {
     const user = await User.findOne({ subscriptionId: subscription.id });
     
+    // LOG THE ENTIRE SUBSCRIPTION OBJECT TO SEE WHAT STRIPE IS SENDING
+    console.log('=== FULL SUBSCRIPTION UPDATE OBJECT ===');
+    console.log(JSON.stringify(subscription, null, 2));
+    console.log('current_period_start:', subscription.current_period_start);
+    console.log('current_period_end:', subscription.current_period_end);
+    console.log('=== END SUBSCRIPTION UPDATE OBJECT ===');
+    
     if (user) {
-      await User.findByIdAndUpdate(user._id, {
+      // Get period dates from subscription items (they're nested there!)
+      let periodStart = null;
+      let periodEnd = null;
+      
+      if (subscription.items && subscription.items.data && subscription.items.data.length > 0) {
+        const firstItem = subscription.items.data[0];
+        periodStart = firstItem.current_period_start ? new Date(firstItem.current_period_start * 1000) : null;
+        periodEnd = firstItem.current_period_end ? new Date(firstItem.current_period_end * 1000) : null;
+      }
+      
+      console.log('Converted update dates from subscription items:');
+      console.log('periodStart:', periodStart);
+      console.log('periodEnd:', periodEnd);
+      
+      // Set ALL subscription fields on update
+      const updateData = {
         subscriptionStatus: subscription.status,
-        currentPeriodStart: new Date(subscription.current_period_start * 1000),
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000)
-      });
+        hasActivePass: subscription.status === 'active'
+      };
+      
+      // Only update dates if they are valid
+      if (periodStart && !isNaN(periodStart.getTime())) {
+        updateData.currentPeriodStart = periodStart;
+      }
+      
+      if (periodEnd && !isNaN(periodEnd.getTime())) {
+        updateData.currentPeriodEnd = periodEnd;
+      }
+      
+      await User.findByIdAndUpdate(user._id, updateData);
+      console.log('Subscription updated for user:', user._id, 'with data:', updateData);
+    } else {
+      console.warn('User not found for subscriptionId:', subscription.id);
     }
   } catch (error) {
     console.error('Error handling subscription update:', error);

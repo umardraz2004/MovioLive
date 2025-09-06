@@ -41,13 +41,19 @@ const Root = () => {
             },
             success: {
               iconTheme: {
-                primary: "#22c55e",
+                primary: "#22c55e", // green
                 secondary: theme === "dark" ? "#1f2937" : "#ffffff",
               },
             },
             error: {
               iconTheme: {
-                primary: "#ef4444",
+                primary: "#ef4444", // red
+                secondary: theme === "dark" ? "#1f2937" : "#ffffff",
+              },
+            },
+            info: {
+              iconTheme: {
+                primary: "#3b82f6", // blue
                 secondary: theme === "dark" ? "#1f2937" : "#ffffff",
               },
             },

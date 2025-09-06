@@ -1,6 +1,7 @@
 // hooks/useUser.js
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { showToast } from "../utils/toast";
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -30,7 +31,7 @@ export function useUser() {
   // Update avatar
   const updateAvatarMutation = useMutation({
     mutationFn: async (base64Image) => {
-      const { data } = await axios.post(
+      const res = await axios.post(
         `${baseUrl}/api/users/upload-avatar`,
         { userId: user._id, image: base64Image },
         {
@@ -38,7 +39,7 @@ export function useUser() {
           headers: { "Content-Type": "application/json" },
         }
       );
-      return data;
+      if (res.status == 200) showToast(res.data.message);
     },
     onSuccess: () => {
       // 👇 Instead of manually setting avatar, just refetch from backend
@@ -50,12 +51,12 @@ export function useUser() {
   const updateFieldMutation = useMutation({
     mutationFn: async ({ field, value }) => {
       console.log(field, value);
-      const { data } = await axios.patch(
+      const res = await axios.patch(
         `${baseUrl}/api/users/${user._id}/${field}`,
         { value },
         { withCredentials: true }
       );
-      return data;
+      if (res.status == 200) showToast(res.data.message);
     },
     onSuccess: () => {
       queryClient.invalidateQueries(["user"]);

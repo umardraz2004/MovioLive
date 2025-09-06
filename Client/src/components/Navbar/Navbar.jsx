@@ -122,7 +122,7 @@ const Navbar = () => {
               {/* Navigation Links */}
               <div className="flex flex-col space-y-4">
                 <NavMenu
-                  isLoggedIn={isLoggedIn}
+                  isLoggedIn={isAuthenticated}
                   isOrganizer={isOrganizer}
                   handleLogout={logout}
                   closeMenu={closeMenu}
@@ -130,7 +130,7 @@ const Navbar = () => {
               </div>
 
               {/* User Profile Section */}
-              {isAuthenticated && isLoggedIn && (
+              {isAuthenticated && (
                 <div className="flex items-center justify-between border-t-2 pt-5 border-gray-900 dark:border-white">
                   <div className="flex flex-col">
                     <span className="font-semibold font-WorkSans text-red-600 dark:text-white">

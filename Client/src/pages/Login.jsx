@@ -40,9 +40,13 @@ const Login = () => {
 
       // ✅ redirect after successful login
       navigate("/");
-      if(res.status == 200) showToast("Login successful", "success");
+      if (res.status == 200) showToast("Login successful", "success");
     } catch (err) {
-      if(err.response.status == 400) showToast(err.response.data.message, "error")
+      if (err.response.status == 400) {
+        showToast(err.response.data.message, "info");
+        navigate("/signup");
+      } else if (err.response.status == 401)
+        showToast(err.response.data.message, "error");
       // optional: show error to user
     } finally {
       // setLoading(false);

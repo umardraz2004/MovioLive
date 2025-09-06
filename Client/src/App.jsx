@@ -41,11 +41,11 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/payment/success",
+        path: "/success",
         element: <PaymentSuccess />,
       },
       {
-        path: "/payment/cancel",
+        path: "/cancel",
         element: <PaymentCancel />,
       },
     ],
