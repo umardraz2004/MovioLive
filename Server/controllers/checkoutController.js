@@ -148,34 +148,28 @@ const handleSubscriptionCreated = async (subscription) => {
     const customerId = subscription.customer;
     const user = await User.findOne({ stripeCustomerId: customerId });
     
-    // LOG THE ENTIRE SUBSCRIPTION OBJECT TO SEE WHAT STRIPE IS SENDING
-    console.log('=== FULL SUBSCRIPTION OBJECT ===');
-    console.log(JSON.stringify(subscription, null, 2));
-    console.log('current_period_start:', subscription.current_period_start);
-    console.log('current_period_end:', subscription.current_period_end);
-    console.log('=== END SUBSCRIPTION OBJECT ===');
-    
     if (user) {
       // Get period dates from subscription items (they're nested there, not on main object!)
       let periodStart = null;
       let periodEnd = null;
+      let planName = null;
       
       if (subscription.items && subscription.items.data && subscription.items.data.length > 0) {
         const firstItem = subscription.items.data[0];
         periodStart = firstItem.current_period_start ? new Date(firstItem.current_period_start * 1000) : null;
         periodEnd = firstItem.current_period_end ? new Date(firstItem.current_period_end * 1000) : null;
+        // Get plan name from the subscription item
+        planName = firstItem.price?.nickname || firstItem.plan?.nickname || null;
       }
-      
-      console.log('Converted dates from subscription items:');
-      console.log('periodStart:', periodStart);
-      console.log('periodEnd:', periodEnd);
       
       // Set ALL subscription fields
       const updateData = {
         subscriptionId: subscription.id,
         subscriptionStatus: subscription.status,
         hasActivePass: true,
-        planType: 'subscription' // or extract from subscription metadata if available
+        planType: 'subscription',
+        planName: planName,
+        roles: ['Audience', 'Organizer'] // Add Organizer role for subscribers
       };
       
       // Only set dates if they are valid
@@ -200,34 +194,35 @@ const handleSubscriptionCreated = async (subscription) => {
 const handleSubscriptionUpdated = async (subscription) => {
   try {
     const user = await User.findOne({ subscriptionId: subscription.id });
-    
-    // LOG THE ENTIRE SUBSCRIPTION OBJECT TO SEE WHAT STRIPE IS SENDING
-    console.log('=== FULL SUBSCRIPTION UPDATE OBJECT ===');
-    console.log(JSON.stringify(subscription, null, 2));
-    console.log('current_period_start:', subscription.current_period_start);
-    console.log('current_period_end:', subscription.current_period_end);
-    console.log('=== END SUBSCRIPTION UPDATE OBJECT ===');
-    
+
     if (user) {
       // Get period dates from subscription items (they're nested there!)
       let periodStart = null;
       let periodEnd = null;
+      let planName = null;
       
       if (subscription.items && subscription.items.data && subscription.items.data.length > 0) {
         const firstItem = subscription.items.data[0];
         periodStart = firstItem.current_period_start ? new Date(firstItem.current_period_start * 1000) : null;
         periodEnd = firstItem.current_period_end ? new Date(firstItem.current_period_end * 1000) : null;
+        // Get plan name from the subscription item
+        planName = firstItem.price?.nickname || firstItem.plan?.nickname || null;
       }
-      
-      console.log('Converted update dates from subscription items:');
-      console.log('periodStart:', periodStart);
-      console.log('periodEnd:', periodEnd);
       
       // Set ALL subscription fields on update
       const updateData = {
         subscriptionStatus: subscription.status,
-        hasActivePass: subscription.status === 'active'
+        hasActivePass: subscription.status === 'active',
+        planName: planName
       };
+      
+      // Add Organizer role if subscription is active
+      if (subscription.status === 'active') {
+        updateData.roles = ['Audience', 'Organizer'];
+      } else {
+        // Remove Organizer role if subscription is not active
+        updateData.roles = ['Audience'];
+      }
       
       // Only update dates if they are valid
       if (periodStart && !isNaN(periodStart.getTime())) {
@@ -255,8 +250,17 @@ const handleSubscriptionDeleted = async (subscription) => {
     if (user) {
       await User.findByIdAndUpdate(user._id, {
         subscriptionStatus: 'canceled',
-        subscriptionId: null
+        subscriptionId: null,
+        hasActivePass: false,
+        roles: ['Audience'], // Remove Organizer role when subscription is canceled
+        planType: null, // Reset plan type
+        planName: null, // Reset plan name
+        currentPeriodStart: null, // Reset period start
+        currentPeriodEnd: null // Reset period end
       });
+      console.log('Subscription deleted and all fields reset for user:', user._id);
+    } else {
+      console.warn('User not found for subscriptionId:', subscription.id);
     }
   } catch (error) {
     console.error('Error handling subscription deletion:', error);

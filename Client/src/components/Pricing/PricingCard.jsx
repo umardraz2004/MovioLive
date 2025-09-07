@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { FiCheck, FiStar } from "react-icons/fi";
 import { useState } from "react";
 import { showToast } from "../../utils/toast";
@@ -22,6 +21,7 @@ const PricingCard = ({ plan, billingType }) => {
         },
         credentials: 'include',
         body: JSON.stringify({
+          planName: plan.name,
           priceId: plan.priceId,
           planType: 'subscription'
         }),

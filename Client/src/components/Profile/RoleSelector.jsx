@@ -1,59 +1,92 @@
-import { FaEdit, FaSave, FaTimes } from "react-icons/fa";
+import { FiUsers, FiCalendar, FiStar, FiShield } from "react-icons/fi";
+import { motion } from "framer-motion";
 
-const RoleSelector = ({
-  roles,
-  editField,
-  setEditField,
-  handleChange,
-  handleSave,
-}) => {
+// Role icons mapping
+const roleIcons = {
+  Audience: FiUsers,
+  Organizer: FiCalendar,
+  Admin: FiShield,
+  Premium: FiStar,
+};
+
+const RoleSelector = ({ roles }) => {
   return (
-    <div className="flex justify-between items-center bg-white dark:bg-black p-4 rounded-lg shadow-md">
-      <div>
-        <p className="text-sm font-semibold font-Kanit tracking-wider text-gray-500 dark:text-red-600">
-          Roles
+    <div className="space-y-4">
+      {/* Roles Display */}
+      <div className="flex flex-wrap gap-3">
+        {roles.map((role, index) => {
+          const IconComponent = roleIcons[role] || FiUsers;
+          
+          return (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              className="flex items-center gap-3 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-3 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+            >
+              <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
+                <IconComponent className="w-4 h-4" />
+              </div>
+              <span className="font-semibold font-Kanit">{role}</span>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Role Summary */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4"
+      >
+        <div className="flex items-center gap-2 mb-2">
+          <FiShield className="w-4 h-4 text-red-600" />
+          <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+            Access Level
+          </span>
+        </div>
+        <p className="text-xs text-gray-600 dark:text-gray-400">
+          {roles.includes('Admin') && 'Full platform administration rights'}
+          {roles.includes('Organizer') && !roles.includes('Admin') && 'Event creation and management capabilities'}
+          {roles.includes('Premium') && !roles.includes('Admin') && !roles.includes('Organizer') && 'Premium streaming and exclusive content access'}
+          {!roles.includes('Admin') && !roles.includes('Organizer') && !roles.includes('Premium') && 'Standard movie streaming access'}
         </p>
-        {editField === "roles" ? (
-          <select
-            value={roles[0]}
-            onChange={(e) => handleChange("roles", e.target.value)}
-            className="mt-1 px-3 py-1 rounded-md border dark:border-gray-600 bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100"
-          >
-            {roles.map((role, index) => (
-              <option key={index + 1} value={role}>
-                {role}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <p className="text-lg">{roles}</p>
-        )}
-      </div>
-      <div className="flex gap-2">
-        {editField === "roles" ? (
-          <>
-            <button
-              onClick={() => handleSave("roles")}
-              className="p-2 bg-green-600 hover:bg-green-700 rounded-md text-white"
-            >
-              <FaSave />
-            </button>
-            <button
-              onClick={() => setEditField(null)}
-              className="p-2 bg-gray-500 hover:bg-gray-600 rounded-md text-white"
-            >
-              <FaTimes />
-            </button>
-          </>
-        ) : (
-          <button
-            onClick={() => setEditField("roles")}
-            className="p-2 bg-red-600 hover:bg-red-700 rounded-md text-white"
-          >
-            <FaEdit />
-          </button>
-        )}
-      </div>
+      </motion.div>
+
+      {/* Special Perks for Premium Users */}
+      {(roles.includes('Organizer') || roles.includes('Premium')) && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 rounded-xl p-4 border border-red-200 dark:border-red-800"
+        >
+          <div className="flex items-center gap-2 mb-2">
+            <FiStar className="w-4 h-4 text-red-600 dark:text-red-400" />
+            <span className="text-sm font-semibold text-red-800 dark:text-red-300 font-Kanit">
+              🎬 Special Perks
+            </span>
+          </div>
+          <ul className="text-xs text-red-700 dark:text-red-400 space-y-1">
+            {roles.includes('Organizer') && (
+              <>
+                <li>• Host unlimited movie events</li>
+                <li>• Advanced streaming tools</li>
+                <li>• Audience management dashboard</li>
+              </>
+            )}
+            {roles.includes('Premium') && (
+              <>
+                <li>• 4K streaming quality</li>
+                <li>• Early access to new releases</li>
+                <li>• Exclusive behind-the-scenes content</li>
+              </>
+            )}
+          </ul>
+        </motion.div>
+      )}
     </div>
   );
 };

@@ -76,6 +76,8 @@ export const specialPlans = [
     price: 0,
     period: "Free",
     duration: "14 days",
+    priceId: null, // No Stripe price ID for free trial
+    planType: "free-trial",
     features: [
       "Create up to 3 test events",
       "Access to all premium features",
@@ -92,6 +94,8 @@ export const specialPlans = [
     price: 5,
     period: "One-time",
     duration: "24 hours",
+    priceId: "price_1S2e4u1AUEKkCmZdlUN9DJX5", // Replace with your actual Stripe Price ID
+    planType: "one-time",
     features: [
       "Full platform access",
       "Create one professional event",

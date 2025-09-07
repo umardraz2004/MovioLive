@@ -1,4 +1,6 @@
 import { FiCheck, FiZap, FiClock } from "react-icons/fi";
+import { useState } from "react";
+import { showToast } from "../../utils/toast";
 
 // Icon mapping
 const iconMap = {
@@ -7,8 +9,55 @@ const iconMap = {
 };
 
 const SpecialOfferCard = ({ plan }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  
   // Get the icon component based on iconName
   const IconComponent = iconMap[plan.iconName];
+
+  const handleCheckout = async () => {
+    setIsLoading(true);
+    
+    try {
+      // Handle free trial differently
+      if (plan.planType === 'free-trial') {
+        // Redirect to signup with free trial
+        showToast('Free trial functionality coming soon!', 'info');
+        setIsLoading(false);
+        return;
+      }
+
+      if (!plan.priceId) {
+        throw new Error('Price ID not found for this plan');
+      }
+
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/checkout/create-checkout-session`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          planName: plan.name,
+          priceId: plan.priceId,
+          planType: plan.planType === 'one-time' ? 'subscription' : plan.planType // Change to subscription for now
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else {
+        showToast(data.error || 'Failed to create checkout session', 'error');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      showToast('Error processing checkout. Please try again.', 'error');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div
@@ -67,8 +116,19 @@ const SpecialOfferCard = ({ plan }) => {
         </ul>
 
         {/* CTA Button */}
-        <button className="w-full py-4 px-8 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-bold text-lg transition-all duration-200 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50">
-          {plan.buttonText}
+        <button 
+          onClick={handleCheckout}
+          disabled={isLoading}
+          className="w-full py-4 px-8 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-xl font-bold text-lg transition-all duration-200 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white/50 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></div>
+              Processing...
+            </div>
+          ) : (
+            plan.buttonText
+          )}
         </button>
       </div>
     </div>

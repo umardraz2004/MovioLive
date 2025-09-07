@@ -50,9 +50,13 @@ const userSchema = new mongoose.Schema(
       enum: ["active", "inactive", "canceled", "past_due"],
       default: "inactive",
     },
+    planName: {
+      type: String,
+      default: null,
+    },
     planType: {
       type: String,
-      enum: ["basic", "standard", "premium", "one-time", "free-trial"],
+      enum: ["basic", "standard", "premium", "one-time", "free-trial", "subscription"],
       default: null,
     },
     currentPeriodStart: {
