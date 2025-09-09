@@ -7,6 +7,7 @@ import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import checkoutRoutes from "./routes/checkoutRoutes.js";
+import { checkExpiredPasses } from "./controllers/checkoutController.js";
 dotenv.config();
 
 const app = express();
@@ -41,4 +42,29 @@ app.use("/api/checkout", checkoutRoutes);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port ${process.env.PORT || 5000}`);
+  
+  // Start periodic cleanup of expired passes
+  // Check every hour (3600000 ms)
+  setInterval(async () => {
+    try {
+      const expiredCount = await checkExpiredPasses();
+      if (expiredCount > 0) {
+        console.log(`🧹 Periodic cleanup: Expired ${expiredCount} one-day passes`);
+      }
+    } catch (error) {
+      console.error('Error in periodic cleanup:', error);
+    }
+  }, 3600000); // Check every hour
+  
+  // Run initial cleanup on server start
+  setTimeout(async () => {
+    try {
+      const expiredCount = await checkExpiredPasses();
+      if (expiredCount > 0) {
+        console.log(`🚀 Initial cleanup: Expired ${expiredCount} one-day passes`);
+      }
+    } catch (error) {
+      console.error('Error in initial cleanup:', error);
+    }
+  }, 5000); // Wait 5 seconds after server start
 });

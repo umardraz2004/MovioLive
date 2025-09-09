@@ -59,6 +59,11 @@ const userSchema = new mongoose.Schema(
       enum: ["basic", "standard", "premium", "one-time", "free-trial", "subscription"],
       default: null,
     },
+    billingPeriod: {
+      type: String,
+      enum: ["monthly", "yearly", "one-time"],
+      default: null,
+    },
     currentPeriodStart: {
       type: Date,
       default: null,

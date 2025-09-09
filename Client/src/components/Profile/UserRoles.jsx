@@ -1,5 +1,6 @@
 import { FiUsers, FiCalendar, FiStar, FiShield } from "react-icons/fi";
 import { motion } from "framer-motion";
+import { getPlanFeatures } from "../../utils/generalFunctions";
 
 // Role icons mapping
 const roleIcons = {
@@ -9,14 +10,17 @@ const roleIcons = {
   Premium: FiStar,
 };
 
-const RoleSelector = ({ roles }) => {
+// Get plan features based on user's subscription
+
+
+const UserRoles = ({ roles, userPlanName, billingPeriod }) => {
   return (
     <div className="space-y-4">
       {/* Roles Display */}
       <div className="flex flex-wrap gap-3">
         {roles.map((role, index) => {
           const IconComponent = roleIcons[role] || FiUsers;
-          
+
           return (
             <motion.div
               key={index}
@@ -48,15 +52,23 @@ const RoleSelector = ({ roles }) => {
           </span>
         </div>
         <p className="text-xs text-gray-600 dark:text-gray-400">
-          {roles.includes('Admin') && 'Full platform administration rights'}
-          {roles.includes('Organizer') && !roles.includes('Admin') && 'Event creation and management capabilities'}
-          {roles.includes('Premium') && !roles.includes('Admin') && !roles.includes('Organizer') && 'Premium streaming and exclusive content access'}
-          {!roles.includes('Admin') && !roles.includes('Organizer') && !roles.includes('Premium') && 'Standard movie streaming access'}
+          {roles.includes("Admin") && "Full platform administration rights"}
+          {roles.includes("Organizer") &&
+            !roles.includes("Admin") &&
+            "Event creation and management capabilities"}
+          {roles.includes("Premium") &&
+            !roles.includes("Admin") &&
+            !roles.includes("Organizer") &&
+            "Premium streaming and exclusive content access"}
+          {!roles.includes("Admin") &&
+            !roles.includes("Organizer") &&
+            !roles.includes("Premium") &&
+            "Standard movie streaming access"}
         </p>
       </motion.div>
 
       {/* Special Perks for Premium Users */}
-      {(roles.includes('Organizer') || roles.includes('Premium')) && (
+      {(roles.includes("Organizer") || roles.includes("Premium")) && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -66,24 +78,14 @@ const RoleSelector = ({ roles }) => {
           <div className="flex items-center gap-2 mb-2">
             <FiStar className="w-4 h-4 text-red-600 dark:text-red-400" />
             <span className="text-sm font-semibold text-red-800 dark:text-red-300 font-Kanit">
-              🎬 Special Perks
+              🎬 Your Plan Features
             </span>
           </div>
           <ul className="text-xs text-red-700 dark:text-red-400 space-y-1">
-            {roles.includes('Organizer') && (
-              <>
-                <li>• Host unlimited movie events</li>
-                <li>• Advanced streaming tools</li>
-                <li>• Audience management dashboard</li>
-              </>
-            )}
-            {roles.includes('Premium') && (
-              <>
-                <li>• 4K streaming quality</li>
-                <li>• Early access to new releases</li>
-                <li>• Exclusive behind-the-scenes content</li>
-              </>
-            )}
+            {userPlanName &&
+              getPlanFeatures(userPlanName, billingPeriod).map(
+                (feature, index) => <li key={index}>• {feature}</li>
+              )}
           </ul>
         </motion.div>
       )}
@@ -91,4 +93,4 @@ const RoleSelector = ({ roles }) => {
   );
 };
 
-export default RoleSelector;
+export default UserRoles;

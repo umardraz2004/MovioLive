@@ -39,7 +39,8 @@ const SpecialOfferCard = ({ plan }) => {
         body: JSON.stringify({
           planName: plan.name,
           priceId: plan.priceId,
-          planType: plan.planType === 'one-time' ? 'subscription' : plan.planType // Change to subscription for now
+          planType: plan.planType === 'one-time' ? 'subscription' : plan.planType, // Change to subscription for now
+          billingPeriod: plan.planType === 'one-time' ? 'one-time' : 'monthly'
         }),
       });
 

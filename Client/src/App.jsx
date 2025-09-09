@@ -8,7 +8,6 @@ import Signup from "./pages/Signup";
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
 import VerifyEmail from "./pages/VerifyEmail";
-import PaymentCancel from "./pages/PaymentCancel";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PrivateRoute from "./components/PrivateRoute";
 // Add these imports at the top
@@ -43,10 +42,6 @@ const router = createBrowserRouter([
       {
         path: "/success",
         element: <PaymentSuccess />,
-      },
-      {
-        path: "/cancel",
-        element: <PaymentCancel />,
       },
     ],
   },

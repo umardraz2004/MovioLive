@@ -23,7 +23,8 @@ const PricingCard = ({ plan, billingType }) => {
         body: JSON.stringify({
           planName: plan.name,
           priceId: plan.priceId,
-          planType: 'subscription'
+          planType: 'subscription',
+          billingPeriod: billingType
         }),
       });
 

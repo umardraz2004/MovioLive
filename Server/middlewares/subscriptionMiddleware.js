@@ -9,21 +9,45 @@ export const checkSubscription = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
+    // Auto-expire subscriptions if they're past their period end
+    if (user.subscriptionStatus === 'active' && user.currentPeriodEnd) {
+      const now = new Date();
+      if (now > new Date(user.currentPeriodEnd)) {
+        // Remove Organizer role when subscription expires
+        const updatedRoles = user.roles.filter(role => role !== 'Organizer');
+        
+        await User.findByIdAndUpdate(userId, {
+          subscriptionStatus: 'inactive',
+          planType: null,
+          planName: null,
+          roles: updatedRoles.length > 0 ? updatedRoles : ['Audience']
+        });
+        
+        console.log(`Auto-expired subscription for user: ${user.email}, removed Organizer role`);
+        
+        // Update user object
+        user.subscriptionStatus = 'inactive';
+        user.planType = null;
+        user.planName = null;
+        user.roles = updatedRoles.length > 0 ? updatedRoles : ['Audience'];
+        
+        req.userSubscriptionExpired = true;
+        req.expiredMessage = "Your subscription has expired. Renew to continue enjoying MovioLive!";
+      }
+    }
+
     // Check if user has active subscription
     const hasActiveSubscription = user.subscriptionStatus === 'active' && 
       user.currentPeriodEnd && 
       new Date(user.currentPeriodEnd) > new Date();
 
-    // Check if user has active one-time pass
-    const hasActivePass = user.hasActivePass && 
-      user.passExpiresAt && 
-      new Date(user.passExpiresAt) > new Date();
-
-    req.user.hasAccess = hasActiveSubscription || hasActivePass;
+    req.user.hasAccess = hasActiveSubscription;
     req.user.subscription = {
       status: user.subscriptionStatus,
       planType: user.planType,
-      expiresAt: user.currentPeriodEnd || user.passExpiresAt
+      expiresAt: user.currentPeriodEnd,
+      isExpired: req.userSubscriptionExpired || false,
+      expiredMessage: req.expiredMessage || null
     };
 
     next();
@@ -42,19 +66,43 @@ export const requireSubscription = async (req, res, next) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Check subscription access
+    // Auto-expire subscriptions if they're past their period end
+    if (user.subscriptionStatus === 'active' && user.currentPeriodEnd) {
+      const now = new Date();
+      if (now > new Date(user.currentPeriodEnd)) {
+        const updatedRoles = user.roles.filter(role => role !== 'Organizer');
+        
+        await User.findByIdAndUpdate(userId, {
+          subscriptionStatus: 'inactive',
+          planType: null,
+          planName: null,
+          roles: updatedRoles.length > 0 ? updatedRoles : ['Audience']
+        });
+        
+        user.subscriptionStatus = 'inactive';
+        user.planType = null;
+        user.planName = null;
+        user.roles = updatedRoles.length > 0 ? updatedRoles : ['Audience'];
+        
+        console.log(`Auto-expired subscription for user: ${user.email}, removed Organizer role`);
+      }
+    }
+
+    // Check subscription access (after potential expiration)
     const hasActiveSubscription = user.subscriptionStatus === 'active' && 
       user.currentPeriodEnd && 
       new Date(user.currentPeriodEnd) > new Date();
 
-    const hasActivePass = user.hasActivePass && 
-      user.passExpiresAt && 
-      new Date(user.passExpiresAt) > new Date();
-
-    if (!hasActiveSubscription && !hasActivePass) {
+    if (!hasActiveSubscription) {
+      // Check if this was a recently expired subscription
+      const wasExpiredSub = user.currentPeriodEnd && new Date() > new Date(user.currentPeriodEnd) && user.subscriptionStatus === 'inactive';
+      
       return res.status(403).json({ 
-        message: "Active subscription required",
-        requiresUpgrade: true 
+        message: wasExpiredSub
+          ? "Your subscription has expired. Renew to continue enjoying MovioLive!"
+          : "Active subscription required",
+        requiresUpgrade: true,
+        wasExpiredSubscription: wasExpiredSub
       });
     }
 

@@ -148,6 +148,14 @@ const PaymentSuccess = () => {
                         {getSubscriptionType(sessionData)}
                       </span>
                     </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Payment Name:
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        {sessionData.payment_name}
+                      </span>
+                    </div>
 
                     <div className="flex justify-between">
                       <span className="text-gray-600 dark:text-gray-400">
@@ -165,15 +173,6 @@ const PaymentSuccess = () => {
                       </span>
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
                         {sessionData.payment_status}
-                      </span>
-                    </div>
-
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">
-                        Session ID:
-                      </span>
-                      <span className="font-mono text-sm text-gray-900 dark:text-white">
-                        {sessionData.id}
                       </span>
                     </div>
                   </div>
