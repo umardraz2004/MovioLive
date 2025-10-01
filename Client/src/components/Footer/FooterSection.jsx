@@ -4,7 +4,7 @@ import NavLogo from "../../assets/images/NavLogo.png"
 
 const FooterSection = () => {
   return (
-    <footer className="bg-gradient-to-r from-gray-200 to-gray-300 dark:from-[#050505] dark:to-[#0b0b0b] text-gray-300 relative overflow-hidden">
+    <footer className="bg-gradient-to-r from-gray-100 to-gray-200 dark:from-[#050505] dark:to-[#0b0b0b] text-gray-300 relative overflow-hidden">
       {/* Gradient top border */}
       <div className="absolute top-0 left-0 w-full h-[5px] bg-[linear-gradient(to_right,_#3b82f6,_#a855f7,_#ef4444,_#3b82f6)] animate-gradient-move"></div>
 

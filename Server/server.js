@@ -54,7 +54,7 @@ app.listen(process.env.PORT || 5000, () => {
     } catch (error) {
       console.error('Error in periodic cleanup:', error);
     }
-  }, 3600000); // Check every hour
+  }, 3600000 * 24); // Check every 24 hours
   
   // Run initial cleanup on server start
   setTimeout(async () => {

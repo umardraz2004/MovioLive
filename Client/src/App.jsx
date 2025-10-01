@@ -4,6 +4,7 @@ import Root from "./Layouts/Root";
 import Error from "./pages/Error";
 import Login from "./pages/Login";
 import Prices from "./pages/Prices";
+import Events from "./pages/Events";
 import Signup from "./pages/Signup";
 import Contact from "./pages/Contact";
 import Profile from "./pages/Profile";
@@ -22,6 +23,14 @@ const router = createBrowserRouter([
       { path: "/login", element: <Login /> },
       { path: "/signup", element: <Signup /> },
       { path: "/contact", element: <Contact /> },
+      {
+        path: "/events",
+        element: (
+          <PrivateRoute>
+            <Events />
+          </PrivateRoute>
+        ),
+      },
       {
         path: "/profile",
         element: (

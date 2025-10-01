@@ -43,7 +43,7 @@ const UserRoles = ({ roles, userPlanName, billingPeriod }) => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4"
+        className="bg-gray-100 dark:bg-[#070707] rounded-xl p-4"
       >
         <div className="flex items-center gap-2 mb-2">
           <FiShield className="w-4 h-4 text-red-600" />

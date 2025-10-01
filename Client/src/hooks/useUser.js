@@ -10,6 +10,7 @@ const fetchUser = async () => {
   const { data } = await axios.get(`${baseUrl}/api/auth/me`, {
     withCredentials: true,
   });
+  console.log("Fetched user:", data.user);
   return data.user;
 };
 
@@ -67,6 +68,7 @@ export function useUser() {
     user,
     isLoading,
     error,
+    isOrganizer: user?.roles?.includes("Organizer") ? true : false,
     updateAvatar: updateAvatarMutation.mutateAsync,
     updateField: updateFieldMutation.mutateAsync,
   };

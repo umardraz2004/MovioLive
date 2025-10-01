@@ -146,7 +146,7 @@ const SubscriptionCard = ({ user, onUserUpdate, billingPeriod, planName }) => {
 
             {/* Subscription Details */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-              <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4">
+              <div className="bg-gray-100 dark:bg-[#070707] rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <FiCalendar className="w-4 h-4 text-red-600" />
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -161,7 +161,7 @@ const SubscriptionCard = ({ user, onUserUpdate, billingPeriod, planName }) => {
                 </p>
               </div>
 
-              <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4">
+              <div className="bg-gray-100 dark:bg-[#070707] rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <FiClock className="w-4 h-4 text-red-600" />
                   <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">

@@ -40,14 +40,7 @@ export const sendPaymentConfirmationEmail = async (email, userName, planName, am
             }
           </div>
           
-          <h3 style="color: #dc2626;">🎬 Your Premium Benefits:</h3>
-          <ul style="line-height: 1.8;">
-            <li>✅ Unlimited movie event hosting</li>
-            <li>✅ HD streaming quality</li>
-            <li>✅ Advanced analytics dashboard</li>
-            <li>✅ Priority customer support</li>
-            <li>✅ Organizer role privileges</li>
-          </ul>
+          <h3 style="color: #dc2626;">🎬 Your premium benefits are active now go to profile to see the benefits.</h3>
           
           <div style="text-align: center; margin-top: 30px;">
             <a href="${process.env.BASE_URL}/profile" style="background: linear-gradient(135deg, #dc2626, #991b1b); color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; font-weight: bold;">

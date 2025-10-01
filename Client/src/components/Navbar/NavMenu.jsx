@@ -1,10 +1,9 @@
 import NavLink from "./NavLink";
 
-const NavMenu = ({ isLoggedIn, isOrganizer, handleLogout, closeMenu }) => {
+const NavMenu = ({ isLoggedIn, isOrganizer, closeMenu }) => {
   return (
     <>
       <NavLink to="/" label="Home" OnNavBtnClick={closeMenu} />
-      <NavLink to="/contact" label="Contact us" OnNavBtnClick={closeMenu} />
       {!isLoggedIn && (
         <>
           <NavLink to="/login" label="Login" OnNavBtnClick={closeMenu} />
@@ -12,11 +11,9 @@ const NavMenu = ({ isLoggedIn, isOrganizer, handleLogout, closeMenu }) => {
         </>
       )}
       {isLoggedIn && isOrganizer && (
-        <NavLink to="/organizer" label="Dashboard" OnNavBtnClick={closeMenu} />
+        <NavLink to="/events" label="Events" OnNavBtnClick={closeMenu} />
       )}
-      {/* {isLoggedIn && (
-        <HoverUnderlineButton onClick={handleLogout} label="Logout" />
-      )} */}
+      <NavLink to="/contact" label="Contact us" OnNavBtnClick={closeMenu} />
     </>
   );
 };

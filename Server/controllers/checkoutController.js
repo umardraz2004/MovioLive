@@ -74,35 +74,6 @@ export const checkExpiredPasses = async () => {
   }
 };
 
-// Function to get user subscription status (checks for expired passes)
-export const getUserSubscriptionStatus = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    
-    // First check and expire any expired passes
-    await checkExpiredPasses();
-    
-    // Get updated user data
-    const user = await User.findById(userId).select('-password');
-    
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-    
-    res.json({
-      success: true,
-      user: user
-    });
-    
-  } catch (error) {
-    console.error('Error getting user subscription status:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: error.message 
-    });
-  }
-};
-
 export const createCheckoutSession = async (req, res) => {
   try {
     const { priceId, planType, billingPeriod } = req.body;

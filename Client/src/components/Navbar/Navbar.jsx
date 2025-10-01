@@ -9,10 +9,8 @@ import UserAvatar from "./UserAvatar";
 import { useUser } from "../../hooks/useUser";
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuth();
-  const { user } = useUser();
-  // const isLoggedIn = !!user;
-  const isOrganizer = user?.role === "organizer";
+  const { isAuthenticated } = useAuth();
+  const { user, isOrganizer } = useUser();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
@@ -53,21 +51,19 @@ const Navbar = () => {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6 text-gray-700 dark:text-gray-200">
-          <NavMenu
-            isLoggedIn={isAuthenticated}
-            isOrganizer={isOrganizer}
-            handleLogout={logout}
-          />
+          <NavMenu isLoggedIn={isAuthenticated} isOrganizer={isOrganizer} />
           {isAuthenticated && (
             <div className="flex">
-              <div className="flex items-center me-5">
-                <Link
-                  to={"/prices"}
-                  className="relative bg-red-500 hover:bg-red-600 text-white py-2 px-5 rounded-lg font-medium text-sm transition-all duration-200 ease-out hover:shadow-lg hover:-translate-y-0.5 focus:outline-none group"
-                >
-                  Become an Organizer
-                </Link>
-              </div>
+              {!user?.roles?.includes("Organizer") && (
+                <div className="flex items-center me-5">
+                  <Link
+                    to={"/prices"}
+                    className="relative bg-red-500 hover:bg-red-600 text-white py-2 px-5 rounded-lg font-medium text-sm transition-all duration-200 ease-out hover:shadow-lg hover:-translate-y-0.5 focus:outline-none group"
+                  >
+                    Become an Organizer
+                  </Link>
+                </div>
+              )}
               <div className="flex items-center">
                 <Link
                   to="/profile"
@@ -124,9 +120,18 @@ const Navbar = () => {
                 <NavMenu
                   isLoggedIn={isAuthenticated}
                   isOrganizer={isOrganizer}
-                  handleLogout={logout}
                   closeMenu={closeMenu}
                 />
+                {!user?.roles?.includes("Organizer") && (
+                  <div className="flex items-center me-5">
+                    <Link
+                      to={"/prices"}
+                      className="relative bg-red-500 hover:bg-red-600 text-white py-2 px-5 rounded-lg font-medium text-sm transition-all duration-200 ease-out hover:shadow-lg hover:-translate-y-0.5 focus:outline-none group"
+                    >
+                      Become an Organizer
+                    </Link>
+                  </div>
+                )}
               </div>
 
               {/* User Profile Section */}

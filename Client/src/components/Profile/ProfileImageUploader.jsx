@@ -61,7 +61,7 @@ const ProfileImageUploader = ({ currentAvatar, onAvatarChange }) => {
         <motion.label 
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
-          className="absolute -bottom-2 -right-2 bg-white text-red-600 p-3 rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-white"
+          className="absolute -bottom-2 -right-2 bg-white text-red-600 p-2 rounded-full cursor-pointer shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-white"
         >
           {isUploading ? (
             <div className="w-4 h-4 border-2 border-red-600/30 border-t-red-600 rounded-full animate-spin"></div>
