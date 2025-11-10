@@ -10,8 +10,20 @@ const NavMenu = ({ isLoggedIn, isOrganizer, closeMenu }) => {
           <NavLink to="/signup" label="Signup" OnNavBtnClick={closeMenu} />
         </>
       )}
-      {isLoggedIn && isOrganizer && (
-        <NavLink to="/events" label="Events" OnNavBtnClick={closeMenu} />
+      {isLoggedIn && (
+        <>
+          <NavLink to="/events" label="Events" OnNavBtnClick={closeMenu} />
+          <NavLink to="/theater" label="Theater" OnNavBtnClick={closeMenu} />
+        </>
+      )}
+      {isOrganizer && (
+        <>
+          <NavLink
+            to="/create-event"
+            label="CreateEvents"
+            OnNavBtnClick={closeMenu}
+          />
+        </>
       )}
       <NavLink to="/contact" label="Contact us" OnNavBtnClick={closeMenu} />
     </>

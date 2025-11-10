@@ -11,6 +11,9 @@ import Profile from "./pages/Profile";
 import VerifyEmail from "./pages/VerifyEmail";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PrivateRoute from "./components/PrivateRoute";
+import CreateEvents from "./pages/CreateEvents";
+import PrivateSubscriptionRoute from "./components/PrivateSubscriptionRoute";
+import Theater from "./pages/Theater";
 // Add these imports at the top
 
 const router = createBrowserRouter([
@@ -28,6 +31,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <Events />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/theater",
+        element: (
+          <PrivateRoute>
+            <Theater />
           </PrivateRoute>
         ),
       },
@@ -51,6 +62,16 @@ const router = createBrowserRouter([
       {
         path: "/success",
         element: <PaymentSuccess />,
+      },
+      {
+        path: "/create-event",
+        element: (
+          <PrivateRoute>
+            <PrivateSubscriptionRoute>
+              <CreateEvents />
+            </PrivateSubscriptionRoute>
+          </PrivateRoute>
+        ),
       },
     ],
   },
