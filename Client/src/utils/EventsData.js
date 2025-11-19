@@ -9,6 +9,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/BigBuckBunny.jpg",
     title: "Big Buck Bunny",
+    tagline: "Discover the heartwarming adventure of a gentle giant who learns that even the kindest hearts can fight back when pushed too far.",
+    keywords: ["animation", "comedy", "family"],
   },
   {
     description: "The first Blender Open Movie from 2006",
@@ -19,6 +21,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ElephantsDream.jpg",
     title: "Elephant Dream",
+    tagline: "Step into a surreal world where reality bends and dreams come alive in this groundbreaking animated masterpiece.",
+    keywords: ["animation", "surreal", "fantasy"],
   },
   {
     description:
@@ -30,6 +34,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
     title: "For Bigger Blazes",
+    tagline: "Experience the ultimate home entertainment revolution with Chromecast - bringing your favorite shows to the big screen.",
+    keywords: ["technology", "streaming", "entertainment"],
   },
   {
     description:
@@ -41,6 +47,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerEscapes.jpg",
     title: "For Bigger Escape",
+    tagline: "Escape into a world of endless entertainment where superheroes and epic adventures await on your living room screen.",
+    keywords: ["technology", "action", "superhero"],
   },
   {
     description:
@@ -52,6 +60,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerFun.jpg",
     title: "For Bigger Fun",
+    tagline: "Transform your ordinary movie nights into extraordinary experiences with seamless streaming technology.",
+    keywords: ["technology", "family", "fun"],
   },
   {
     description:
@@ -63,6 +73,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerJoyrides.jpg",
     title: "For Bigger Joyrides",
+    tagline: "Embark on thrilling adventures and high-octane joyrides from the comfort of your couch with cutting-edge streaming.",
+    keywords: ["technology", "adventure", "excitement"],
   },
   {
     description:
@@ -74,6 +86,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerMeltdowns.jpg",
     title: "For Bigger Meltdowns",
+    tagline: "Experience comedy like never before with epic meltdowns and hilarious moments amplified on the big screen.",
+    keywords: ["technology", "comedy", "family"],
   },
   {
     description:
@@ -85,6 +99,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/Sintel.jpg",
     title: "Sintel",
+    tagline: "Journey through a mystical world of dragons and magic in this breathtaking tale of courage, loss, and redemption.",
+    keywords: ["animation", "fantasy", "dragons"],
   },
   {
     description:
@@ -96,6 +112,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/SubaruOutbackOnStreetAndDirt.jpg",
     title: "Subaru Outback On Street And Dirt",
+    tagline: "Experience the ultimate off-road adventure as we push the rugged Subaru Outback to its limits on challenging terrain.",
+    keywords: ["automotive", "adventure", "off-road"],
   },
   {
     description:
@@ -107,6 +125,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/TearsOfSteel.jpg",
     title: "Tears of Steel",
+    tagline: "Enter a dystopian future where technology and humanity collide in this visually stunning sci-fi thriller.",
+    keywords: ["sci-fi", "futuristic", "thriller"],
   },
   {
     description:
@@ -118,6 +138,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/VolkswagenGTIReview.jpg",
     title: "Volkswagen GTI Review",
+    tagline: "Witness high-speed thrills and precision driving as we put the legendary Volkswagen GTI through its paces on the track.",
+    keywords: ["automotive", "racing", "performance"],
   },
   {
     description:
@@ -129,6 +151,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WeAreGoingOnBullrun.jpg",
     title: "We Are Going On Bullrun",
+    tagline: "Join the ultimate cross-country automotive adventure in a roaring Shelby GT500 as we race across America.",
+    keywords: ["automotive", "adventure", "rally"],
   },
   {
     description:
@@ -140,6 +164,8 @@ const movies = [
     thumb:
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/WhatCarCanYouGetForAGrand.jpg",
     title: "What care can you get for a grand?",
+    tagline: "Discover amazing automotive bargains and budget-friendly gems as we explore what $1,000 can buy in the used car market.",
+    keywords: ["automotive", "budget", "review"],
   },
 ];
 

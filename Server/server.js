@@ -7,6 +7,7 @@ import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import checkoutRoutes from "./routes/checkoutRoutes.js";
+import eventRoutes from "./routes/eventRoutes.js";
 import { checkExpiredPasses } from "./controllers/checkoutController.js";
 dotenv.config();
 
@@ -39,6 +40,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/checkout", checkoutRoutes);
+app.use("/api/event", eventRoutes);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port ${process.env.PORT || 5000}`);
