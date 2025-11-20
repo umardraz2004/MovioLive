@@ -9,126 +9,61 @@ import {
   FaUsers,
   FaFire,
 } from "react-icons/fa";
+import { useEvent } from "../hooks/useEvent";
+import movies from "../utils/EventsData";
 import EventHeroSection from "../components/Event/EventHeroSection";
 
-// Sample events data - replace with your actual data
-const sampleEvents = [
-  {
-    id: 1,
-    title: "Inception - Director's Commentary",
-    description:
-      "Join Christopher Nolan for an exclusive director's commentary of this mind-bending masterpiece.",
-    image:
-      "https://images.unsplash.com/photo-1518929458119-e5bf444c30f4?w=500&h=300&fit=crop",
-    date: "2025-09-25",
-    time: "8:00 PM",
-    location: "Virtual Theater A",
-    price: "$15.99",
-    attendees: 245,
-    category: "upcoming",
-    isLive: false,
-    tags: ["Sci-Fi", "Director's Cut", "Premium"],
-  },
-  {
-    id: 2,
-    title: "Horror Movie Marathon",
-    description:
-      "A spine-chilling collection of classic horror films with live audience reactions.",
-    image:
-      "https://images.unsplash.com/photo-1518929458119-e5bf444c30f4?w=500&h=300&fit=crop",
-    date: "2025-09-20",
-    time: "NOW LIVE",
-    location: "Virtual Theater B",
-    price: "$9.99",
-    attendees: 892,
-    category: "live",
-    isLive: true,
-    tags: ["Horror", "Marathon", "Interactive"],
-  },
-  {
-    id: 3,
-    title: "Marvel Universe Deep Dive",
-    description:
-      "Explore the interconnected Marvel Cinematic Universe with special guest appearances.",
-    image:
-      "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&h=300&fit=crop",
-    date: "2025-09-22",
-    time: "7:30 PM",
-    location: "Virtual Theater C",
-    price: "$12.99",
-    attendees: 567,
-    category: "upcoming",
-    isLive: false,
-    tags: ["Action", "Marvel", "Special Guest"],
-  },
-  {
-    id: 4,
-    title: "Classic Cinema Night",
-    description:
-      "Experience timeless classics with enhanced digital restoration and live discussions.",
-    image:
-      "https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=500&h=300&fit=crop",
-    date: "2025-09-20",
-    time: "NOW LIVE",
-    location: "Virtual Theater D",
-    price: "$8.99",
-    attendees: 324,
-    category: "live",
-    isLive: true,
-    tags: ["Classic", "Restoration", "Discussion"],
-  },
-  {
-    id: 5,
-    title: "Indie Film Festival",
-    description:
-      "Discover emerging filmmakers and hidden gems in this curated indie film showcase.",
-    image:
-      "https://images.unsplash.com/photo-1518929458119-e5bf444c30f4?w=500&h=300&fit=crop",
-    date: "2025-09-28",
-    time: "6:00 PM",
-    location: "Virtual Theater E",
-    price: "$11.99",
-    attendees: 156,
-    category: "upcoming",
-    isLive: false,
-    tags: ["Indie", "Festival", "Emerging"],
-  },
-];
-
-const tabs = [
-  { key: "all", label: "All Events ", count: sampleEvents.length },
-  {
-    key: "live",
-    label: "Live Now ",
-    count: sampleEvents.filter((event) => event.category === "live").length,
-  },
-  {
-    key: "upcoming",
-    label: "Upcoming ",
-    count: sampleEvents.filter((event) => event.category === "upcoming").length,
-  },
-];
-
 const Events = () => {
+  const { events } = useEvent();
   const [activeTab, setActiveTab] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredEvents = sampleEvents.filter((event) => {
-    const matchesTab = activeTab === "all" || event.category === activeTab;
+  // Calculate dynamic tabs with actual event counts
+  const tabs = [
+    { key: "all", label: "All Events ", count: events.length },
+    {
+      key: "live",
+      label: "Live Now ",
+      count: events.filter((event) => event.status === "live").length,
+    },
+    {
+      key: "upcoming",
+      label: "Upcoming ",
+      count: events.filter((event) => event.status === "upcoming").length,
+    },
+    {
+      key: "cancelled",
+      label: "Cancelled ",
+      count: events.filter((event) => event.status === "cancelled").length,
+    },
+  ];
+
+  const filteredEvents = events.filter((event) => {
+    // Match tab based on event status (backend uses 'status' not 'category')
+    const matchesTab = activeTab === "all" || event.status === activeTab;
+
+    // Find matching movie data
+    const movieData = movies.find((movie) => movie.title === event.title);
+
+    // Search in event title and movie data if available
     const matchesSearch =
       event.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      event.tags.some((tag) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase())
+      movieData?.description
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      movieData?.subtitle?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      movieData?.keywords?.some((keyword) =>
+        keyword.toLowerCase().includes(searchTerm.toLowerCase())
       );
+
     return matchesTab && matchesSearch;
   });
 
-  const liveEventsCount = sampleEvents.filter(
-    (event) => event.category === "live"
+  const liveEventsCount = events.filter(
+    (event) => event.status === "live"
   ).length;
-  const upcomingEventsCount = sampleEvents.filter(
-    (event) => event.category === "upcoming"
+  const upcomingEventsCount = events.filter(
+    (event) => event.status === "upcoming"
   ).length;
 
   return (
@@ -184,84 +119,100 @@ const Events = () => {
             transition={{ duration: 0.4 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"
           >
-            {filteredEvents.map((event, index) => (
-              <motion.div
-                key={event.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="group relative backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10 hover:border-red-600/70 transition-all duration-300 shadow-lg"
-              >
-                {/* Live Badge */}
-                {event.isLive && (
-                  <div className="absolute top-3 left-3 z-10 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 animate-pulse shadow-lg">
-                    <FaPlay className="w-2 h-2" />
-                    LIVE
-                  </div>
-                )}
+            {filteredEvents.map((event, index) => {
+              // Find matching movie data for additional details
+              const movieData = movies.find(
+                (movie) => movie.title === event.title
+              );
 
-                {/* Event Image */}
-                <div className="relative h-52 overflow-hidden">
-                  <img
-                    src={event.image}
-                    alt={event.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-                </div>
+              return (
+                <motion.div
+                  key={event._id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  className="group relative backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10 hover:border-red-600/70 transition-all duration-300 shadow-lg"
+                >
+                  {/* Live Badge */}
+                  {event.status === "live" && (
+                    <div className="absolute top-3 left-3 z-10 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 animate-pulse shadow-lg">
+                      <FaPlay className="w-2 h-2" />
+                      LIVE
+                    </div>
+                  )}
 
-                {/* Content */}
-                <div className="p-7">
-                  <div className="flex flex-wrap gap-2 mb-3">
-                    {event.tags.map((tag, tagIndex) => (
-                      <span
-                        key={tagIndex}
-                        className="px-2 py-1 bg-red-600/20 text-red-600 text-xs font-WorkSans rounded-full border border-red-600/30 shadow-sm"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                  {/* Event Image */}
+                  <div className="relative h-52 overflow-hidden">
+                    <img
+                      src={
+                        movieData?.thumb ||
+                        "https://images.unsplash.com/photo-1518929458119-e5bf444c30f4?w=500&h=300&fit=crop"
+                      }
+                      alt={event.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
                   </div>
 
-                  <h3 className="text-2xl font-extrabold mb-2 group-hover:text-red-600 font-WorkSans transition-colors duration-300 drop-shadow">
-                    {event.title}
-                  </h3>
+                  {/* Content */}
+                  <div className="p-7">
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {movieData?.keywords?.map((keyword, tagIndex) => (
+                        <span
+                          key={tagIndex}
+                          className="px-2 py-1 bg-red-600/20 text-red-600 text-xs font-WorkSans rounded-full border border-red-600/30 shadow-sm"
+                        >
+                          {keyword}
+                        </span>
+                      )) || (
+                        <span className="px-2 py-1 bg-blue-600/20 text-blue-600 text-xs font-WorkSans rounded-full border border-blue-600/30 shadow-sm">
+                          {event.status}
+                        </span>
+                      )}
+                    </div>
 
-                  <p className="text-gray-500 text-base mb-4 line-clamp-2">
-                    {event.description}
-                  </p>
+                    <h3 className="text-2xl font-extrabold mb-2 group-hover:text-red-600 font-WorkSans transition-colors duration-300 drop-shadow">
+                      {event.title}
+                    </h3>
 
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center gap-3 text-sm text-gray-400">
-                      <FaCalendarAlt className="w-4 h-4 text-red-400" />
-                      <span>{event.date}</span>
+                    <p className="text-gray-500 text-base mb-4 line-clamp-2">
+                      {movieData?.description ||
+                        movieData?.subtitle ||
+                        "Exciting movie event - don't miss out!"}
+                    </p>
+
+                    <div className="space-y-2 mb-4">
+                      <div className="flex items-center gap-3 text-sm text-gray-400">
+                        <FaCalendarAlt className="w-4 h-4 text-red-400" />
+                        <span>{new Date(event.date).toLocaleDateString()}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm text-gray-400">
+                        <FaClock className="w-4 h-4 text-red-400" />
+                        <span>{event.time}</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm text-gray-400">
+                        <FaMapMarkerAlt className="w-4 h-4 text-red-400" />
+                        <span>Virtual Theater</span>
+                      </div>
+                      <div className="flex items-center gap-3 text-sm text-gray-400">
+                        <FaUsers className="w-4 h-4 text-red-400" />
+                        <span>{event.viewer || 0} attending</span>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3 text-sm text-gray-400">
-                      <FaClock className="w-4 h-4 text-red-400" />
-                      <span>{event.time}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-gray-400">
-                      <FaMapMarkerAlt className="w-4 h-4 text-red-400" />
-                      <span>{event.location}</span>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-gray-400">
-                      <FaUsers className="w-4 h-4 text-red-400" />
-                      <span>{event.attendees} attending</span>
+
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="text-2xl font-bold text-red-400 drop-shadow">
+                        ${event.price}
+                      </div>
+                      <button className="bg-gradient-to-r from-red-600 via-red-500 to-red-700 hover:from-red-700 hover:to-red-600 text-white px-5 py-2 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg">
+                        <FaTicketAlt className="w-4 h-4" />
+                        {event.status === "live" ? "Join Now" : "Get Ticket"}
+                      </button>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="text-2xl font-bold text-red-400 drop-shadow">
-                      {event.price}
-                    </div>
-                    <button className="bg-gradient-to-r from-red-600 via-red-500 to-red-700 hover:from-red-700 hover:to-red-600 text-white px-5 py-2 rounded-xl font-bold transition-all duration-300 transform hover:scale-105 flex items-center gap-2 shadow-lg">
-                      <FaTicketAlt className="w-4 h-4" />
-                      {event.isLive ? "Join Now" : "Get Ticket"}
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </motion.div>
         </AnimatePresence>
 

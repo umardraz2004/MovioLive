@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import movies from "../utils/EventsData.js";
 import { showToast } from "../utils/toast.js";
 import { useEvent } from "../hooks/useEvent.js";
@@ -174,7 +174,7 @@ const CreateEvents = () => {
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-16">
                   {events.map((event) => {
                     // Find matching movie data by title
                     const movieData = movies.find(
@@ -186,14 +186,16 @@ const CreateEvents = () => {
                         key={event._id}
                         className="bg-white dark:bg-[#090909] rounded-xl p-6 shadow-lg"
                       >
-                        <div className="flex gap-4 mb-4">
+                        <div className="mb-4">
                           {/* Show movie thumbnail if found */}
                           {movieData && (
-                            <img
-                              src={movieData.thumb}
-                              alt={event.title}
-                              className="w-20 h-28 object-cover rounded-lg"
-                            />
+                            <div className="h-30 overflow-hidden mb-4">
+                              <img
+                                src={movieData.thumb}
+                                alt={event.title}
+                                className="w-full h-full object-cover rounded-lg"
+                              />
+                            </div>
                           )}
                           <div className="flex-1">
                             <h3 className="font-bold text-lg text-gray-800 dark:text-white mb-2">
@@ -204,7 +206,7 @@ const CreateEvents = () => {
                                 {movieData.subtitle}
                               </p>
                             )}
-                            <div className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
+                            <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                               <p>
                                 <strong>📅 Date:</strong>{" "}
                                 {new Date(event.date).toLocaleDateString()}
