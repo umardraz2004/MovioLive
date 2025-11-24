@@ -34,6 +34,25 @@ const createEvent = async (req, res) => {
 
 const getAllEvents = async (req, res) => {
   try {
+    const events = await Event.find()
+      .sort({ date: 1, time: 1 }) // Sort by date and time (upcoming first)
+      .select("title date time price status viewer createdAt updatedAt");
+
+    const totalEvents = events.length;
+
+    res.status(200).json({
+      message: "Events retrieved successfully",
+      events,
+      totalEvents,
+    });
+  } catch (error) {
+    console.error("Error fetching all events:", error);
+    res.status(500).json({ message: "Server error while fetching all events" });
+  }
+};
+
+const getUserSpecificEvent = async (req, res) => {
+  try {
     // Get userId from authenticated user
     const userId = req.user.id;
 
@@ -47,12 +66,12 @@ const getAllEvents = async (req, res) => {
       .select("title date time price status viewer createdAt updatedAt"); // Select specific fields
 
     // Count total events
-    const totalEvents = events.length;
+    const totalUserEvents = events.length;
 
     res.status(200).json({
       message: "Events retrieved successfully",
       events,
-      totalEvents,
+      totalUserEvents,
     });
   } catch (error) {
     console.error("Error fetching events:", error);
@@ -90,4 +109,4 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-export { createEvent, getAllEvents, deleteEvent };
+export { createEvent,getAllEvents, getUserSpecificEvent, deleteEvent };

@@ -8,6 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
 import checkoutRoutes from "./routes/checkoutRoutes.js";
 import eventRoutes from "./routes/eventRoutes.js";
+import ticketRoutes from "./routes/ticketRoutes.js";
 import { checkExpiredPasses } from "./controllers/checkoutController.js";
 dotenv.config();
 
@@ -41,32 +42,37 @@ app.use("/api/users", userRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/checkout", checkoutRoutes);
 app.use("/api/event", eventRoutes);
+app.use("/api/tickets", ticketRoutes);
 
 app.listen(process.env.PORT || 5000, () => {
   console.log(`Server is running on port ${process.env.PORT || 5000}`);
-  
-  // Start periodic cleanup of expired passes
-  // Check every hour (3600000 ms)
-  setInterval(async () => {
+
+  // Enhanced cleanup function with better strategy
+  const runCleanup = async (type = "periodic") => {
     try {
       const expiredCount = await checkExpiredPasses();
       if (expiredCount > 0) {
-        console.log(`🧹 Periodic cleanup: Expired ${expiredCount} one-day passes`);
+        const emoji = type === "initial" ? "🚀" : "🧹";
+        console.log(
+          `${emoji} ${type} cleanup: Processed ${expiredCount} expired passes`
+        );
+      } else if (type === "initial") {
+        console.log("🚀 Initial cleanup: No expired passes found");
       }
     } catch (error) {
-      console.error('Error in periodic cleanup:', error);
+      console.error(`Error in ${type} cleanup:`, error);
     }
-  }, 3600000 * 24); // Check every 24 hours
-  
-  // Run initial cleanup on server start
+  };
+
+  // Optimized cleanup strategy
   setTimeout(async () => {
-    try {
-      const expiredCount = await checkExpiredPasses();
-      if (expiredCount > 0) {
-        console.log(`🚀 Initial cleanup: Expired ${expiredCount} one-day passes`);
-      }
-    } catch (error) {
-      console.error('Error in initial cleanup:', error);
-    }
-  }, 5000); // Wait 5 seconds after server start
+    // Initial cleanup on server start
+    await runCleanup("initial");
+
+    // Reduced frequency - every 12 hours (less server load)
+    // Most subscriptions expire at specific times, not randomly
+    setInterval(() => runCleanup("periodic"), 3600000 * 12); // Every 12 hours
+
+    console.log("💳 Payment expiration monitoring active");
+  }, 5000);
 });

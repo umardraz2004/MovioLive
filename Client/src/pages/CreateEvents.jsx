@@ -4,7 +4,7 @@ import { showToast } from "../utils/toast.js";
 import { useEvent } from "../hooks/useEvent.js";
 
 const CreateEvents = () => {
-  const { events, totalEvents, createEvent, deleteEvent } = useEvent();
+  const { userEvents, totalUserEvents, createEvent, deleteEvent } = useEvent();
   const [activeTab, setActiveTab] = useState("browse");
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [hostMovieSidebarOpen, sethostMovieSidebarOpen] = useState(false);
@@ -85,7 +85,7 @@ const CreateEvents = () => {
               }`}
               onClick={() => setActiveTab("history")}
             >
-              My Events ({totalEvents}) {/* hosted event count comes here*/}
+              My Events ({totalUserEvents}) {/* hosted event count comes here*/}
             </button>
           </div>
         </div>
@@ -156,7 +156,7 @@ const CreateEvents = () => {
                 My Events
               </h2>
 
-              {totalEvents === 0 ? ( // hosted event count comes here
+              {totalUserEvents === 0 ? ( // hosted event count comes here
                 <div className="text-center text-white py-16">
                   <div className="bg-gray-100 dark:bg-black/60 backdrop-blur-sm rounded-xl p-8 max-w-md mx-auto">
                     <h3 className="text-red-600 text-xl font-semibold mb-4">
@@ -175,7 +175,7 @@ const CreateEvents = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-16">
-                  {events.map((event) => {
+                  {userEvents.map((event) => {
                     // Find matching movie data by title
                     const movieData = movies.find(
                       (movie) => movie.title === event.title
@@ -238,9 +238,9 @@ const CreateEvents = () => {
                           </div>
                         </div>
                         <div className="flex gap-2 justify-end">
-                          <button className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition-colors">
-                            Edit
-                          </button>
+                          {/*<button className="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition-colors">
+                          Edit
+                        </button>*/}
                           <button
                             onClick={() => handleDeleteEvent(event._id)}
                             className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-600 transition-colors"
@@ -277,7 +277,7 @@ const CreateEvents = () => {
                   onClick={() => setViewDetailSidebarOpen(false)}
                   className="w-8 h-8 rounded-full bg-black/20 flex items-center justify-center hover:bg-black/30 transition-colors"
                 >
-                  ×
+                  ✕
                 </button>
               </div>
             </div>

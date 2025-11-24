@@ -6,8 +6,16 @@ import { showToast } from "../utils/toast";
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 // Fetch all events for the authenticated user
-const fetchEvents = async () => {
-  const { data } = await axios.get(`${baseUrl}/api/event/get-events`, {
+const fetchUserEvents = async () => {
+  const { data } = await axios.get(`${baseUrl}/api/event/get-user-events`, {
+    withCredentials: true,
+  });
+  console.log("Fetched events:", data);
+  return data;
+};
+
+const fetchAllEvents = async () => {
+  const { data } = await axios.get(`${baseUrl}/api/event/get-all-events`, {
     withCredentials: true,
   });
   console.log("Fetched events:", data);
@@ -17,14 +25,26 @@ const fetchEvents = async () => {
 export function useEvent() {
   const queryClient = useQueryClient();
 
-  // Get events
+  // Get user events
   const {
     data: eventsData,
     isLoading,
     error,
   } = useQuery({
+    queryKey: ["userEvents"],
+    queryFn: fetchUserEvents,
+    staleTime: 0, // force refetch each time we invalidate
+    cacheTime: 0,
+  });
+
+  // Get all events
+  const {
+    data: allEventsData,
+    isLoading: allEventsLoading,
+    error: allEventsError,
+  } = useQuery({
     queryKey: ["events"],
-    queryFn: fetchEvents,
+    queryFn: fetchAllEvents,
     staleTime: 0, // force refetch each time we invalidate
     cacheTime: 0,
   });
@@ -41,7 +61,7 @@ export function useEvent() {
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["events"]);
+      queryClient.invalidateQueries(["events", "userEvents"]);
     },
   });
 
@@ -55,15 +75,19 @@ export function useEvent() {
       return res.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["events"]);
+      queryClient.invalidateQueries(["events", "userEvents"]);
     },
   });
 
   return {
-    events: eventsData?.events || [],
-    totalEvents: eventsData?.totalEvents || 0,
+    userEvents: eventsData?.events || [],
+    events: allEventsData?.events || [],
+    totalEvents: allEventsData?.totalEvents || 0,
+    totalUserEvents: eventsData?.totalUserEvents || 0,
     isLoading,
+    allEventsLoading,
     error,
+    allEventsError,
     createEvent: createEventMutation.mutateAsync,
     deleteEvent: deleteEventMutation.mutateAsync,
   };
