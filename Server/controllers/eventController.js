@@ -21,6 +21,7 @@ const createEvent = async (req, res) => {
         date,
         time,
         price: parseFloat(price),
+        ticketCount: 0,
       });
       return res
         .status(201)
@@ -36,7 +37,9 @@ const getAllEvents = async (req, res) => {
   try {
     const events = await Event.find()
       .sort({ date: 1, time: 1 }) // Sort by date and time (upcoming first)
-      .select("title date time price status viewer createdAt updatedAt");
+      .select(
+        "title date time price status viewer ticketCount createdAt updatedAt"
+      );
 
     const totalEvents = events.length;
 
@@ -63,7 +66,9 @@ const getUserSpecificEvent = async (req, res) => {
     // Find all events for this specific user
     const events = await Event.find({ userId })
       .sort({ date: 1, time: 1 }) // Sort by date and time (upcoming first)
-      .select("title date time price status viewer createdAt updatedAt"); // Select specific fields
+      .select(
+        "title date time price status viewer ticketCount createdAt updatedAt"
+      ); // Select specific fields
 
     // Count total events
     const totalUserEvents = events.length;
@@ -109,4 +114,4 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-export { createEvent,getAllEvents, getUserSpecificEvent, deleteEvent };
+export { createEvent, getAllEvents, getUserSpecificEvent, deleteEvent };

@@ -21,6 +21,10 @@ const eventSchema = new mongoose.Schema(
       enum: ["live", "upcoming", "canceled"],
       default: "upcoming",
     },
+    ticketCount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,

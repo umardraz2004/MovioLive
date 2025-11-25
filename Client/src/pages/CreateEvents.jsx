@@ -2,6 +2,7 @@ import { useState } from "react";
 import movies from "../utils/EventsData.js";
 import { showToast } from "../utils/toast.js";
 import { useEvent } from "../hooks/useEvent.js";
+import Modal from "../components/Modal/Modal.jsx";
 
 const CreateEvents = () => {
   const { userEvents, totalUserEvents, createEvent, deleteEvent } = useEvent();
@@ -9,6 +10,15 @@ const CreateEvents = () => {
   const [selectedMovie, setSelectedMovie] = useState(null);
   const [hostMovieSidebarOpen, sethostMovieSidebarOpen] = useState(false);
   const [viewDetailSidebarOpen, setViewDetailSidebarOpen] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "info",
+    onConfirm: null,
+    confirmText: "OK",
+    showCancel: false,
+  });
   const [eventForm, setEventForm] = useState({
     title: "",
     date: "",
@@ -40,20 +50,56 @@ const CreateEvents = () => {
       sethostMovieSidebarOpen(false);
       setSelectedMovie(null);
       setEventForm({ title: "", date: "", time: "", price: "" });
+      
+      // Show informational modal about deletion policy
+      setModalConfig({
+        isOpen: true,
+        title: "Event Created Successfully! 🎉",
+        message: `Your event "${selectedMovie.title}" has been created!\n\nImportant Information:\n• You can delete this event ONLY before any tickets are sold\n• Once tickets are sold, the event cannot be deleted\n• This policy protects customers who have purchased tickets\n• Monitor your ticket sales in the "My Events" section`,
+        type: "success",
+        confirmText: "Got it!",
+        showCancel: false,
+        onConfirm: () => setModalConfig(prev => ({ ...prev, isOpen: false }))
+      });
     } catch (error) {
       // Handle error, keep modals open
       showToast("Failed to create event. Please try again.", "error");
     }
   };
 
-  const handleDeleteEvent = async (eventId) => {
-    if (window.confirm("Are you sure you want to delete this event?")) {
-      try {
-        await deleteEvent(eventId);
-      } catch (error) {
-        showToast("Failed to delete event. Please try again.", "error");
-      }
+  const handleDeleteEvent = async (eventId, event) => {
+    // Check if event has sold tickets
+    if (event.ticketCount > 0) {
+      setModalConfig({
+        isOpen: true,
+        title: "Cannot Delete Event",
+        message: `This event cannot be deleted because ${event.ticketCount} ticket${event.ticketCount > 1 ? 's have' : ' has'} been sold.\n\nPolicy:\n• Events can only be deleted before any tickets are sold\n• This protects customers who have already purchased tickets\n• Once tickets are sold, the event must remain available`,
+        type: "error",
+        confirmText: "Understood",
+        showCancel: false,
+        onConfirm: () => setModalConfig(prev => ({ ...prev, isOpen: false }))
+      });
+      return;
     }
+
+    // Show confirmation modal for events without tickets
+    setModalConfig({
+      isOpen: true,
+      title: "Confirm Deletion",
+      message: `Are you sure you want to delete "${event.title}"?\n\nThis action cannot be undone.`,
+      type: "confirm",
+      confirmText: "Delete",
+      showCancel: true,
+      onConfirm: async () => {
+        try {
+          await deleteEvent(eventId);
+          setModalConfig(prev => ({ ...prev, isOpen: false }));
+          showToast("Event deleted successfully", "success");
+        } catch (error) {
+          showToast("Failed to delete event. Please try again.", "error");
+        }
+      }
+    });
   };
 
   return (
@@ -221,6 +267,10 @@ const CreateEvents = () => {
                                 <strong>👥 Viewers:</strong> {event.viewer || 0}
                               </p>
                               <p>
+                                <strong>🎟️ Tickets Sold:</strong>{" "}
+                                {event.ticketCount || 0}
+                              </p>
+                              <p>
                                 <strong>📊 Status:</strong>
                                 <span
                                   className={`ml-2 px-2 py-1 rounded-full text-xs font-semibold ${
@@ -242,10 +292,17 @@ const CreateEvents = () => {
                           Edit
                         </button>*/}
                           <button
-                            onClick={() => handleDeleteEvent(event._id)}
-                            className="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-600 transition-colors"
+                            onClick={() => handleDeleteEvent(event._id, event)}
+                            disabled={event.ticketCount > 0}
+                            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                              event.ticketCount > 0
+                                ? "bg-gray-400 text-gray-600 cursor-not-allowed"
+                                : "bg-red-500 text-white hover:bg-red-600"
+                            }`}
                           >
-                            Delete
+                            {event.ticketCount > 0
+                              ? `Cannot Delete (${event.ticketCount} tickets sold)`
+                              : "Delete"}
                           </button>
                         </div>
                       </div>
@@ -498,6 +555,18 @@ const CreateEvents = () => {
           </div>
         </div>
       )}
+
+      {/* Reusable Modal Component */}
+      <Modal
+        isOpen={modalConfig.isOpen}
+        onClose={() => setModalConfig(prev => ({ ...prev, isOpen: false }))}
+        onConfirm={modalConfig.onConfirm}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        type={modalConfig.type}
+        confirmText={modalConfig.confirmText}
+        showCancel={modalConfig.showCancel}
+      />
     </div>
   );
 };

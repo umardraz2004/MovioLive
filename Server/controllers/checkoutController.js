@@ -280,9 +280,17 @@ const handleTicketPurchase = async (session) => {
       amountPaid: event.price,
     });
 
+    // Auto-increment the ticket count for the event (atomic operation)
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventId,
+      { $inc: { ticketCount: 1 } }, // Increment ticketCount by 1
+      { new: true }
+    );
+
     console.log(`Created ticket: ${ticketNumber}`);
     console.log(`Successfully created ticket for event ${eventId}`);
     console.log("Ticket number:", ticket.ticketNumber);
+    console.log(`Event ticket count updated to: ${updatedEvent.ticketCount}`);
   } catch (error) {
     console.error("Error handling ticket purchase:", error);
   }
@@ -707,7 +715,7 @@ export const createTicketCheckoutSession = async (req, res) => {
       });
     }
 
-    const successUrl = `${process.env.BASE_URL}/ticket-success?session_id={CHECKOUT_SESSION_ID}`;
+    const successUrl = `${process.env.BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}`;
 
     console.log("Creating ticket checkout session:");
     console.log("Event:", event.title, "Price:", event.price);
