@@ -35,8 +35,7 @@ MovioLive is a virtual movie theater platform that allows users to schedule and 
 ## Developer
 
 **Umar Draz**
-- GitHub: [@umardraz2004](https://github.com/umardraz2004)
-- Email: umardraz2004@gmail.com
+- Email: mumardraz.dev@gmail.com
 
 ---
 
